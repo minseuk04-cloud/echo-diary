@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Diary</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f5f2ee;--bg2:#ede9e3;--sf:#fff;--sf2:#f9f7f4;--bd:rgba(160,140,120,0.15);--bd2:rgba(160,140,120,0.28);--tx:#2c2620;--mu:#7a6e64;--dm:#b0a396;--ac:#8b6bbf;--ac2:#5b9e8e;--ac3:#c47c5e;--gold:#b8882a;--ac-bg:rgba(139,107,191,0.08);--r:16px;--rs:10px;--sh:0 2px 16px rgba(100,80,60,0.08);--sh2:0 4px 24px rgba(100,80,60,0.12);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;line-height:1.7;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 10%,rgba(139,107,191,0.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(91,158,142,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
+.app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 20px 80px;}
+
+/* AUTH */
+#authScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;position:relative;z-index:1;}
+.auth-mark{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 14px;box-shadow:0 4px 20px rgba(139,107,191,0.25);}
+.auth-name{font-family:'Noto Serif KR',serif;font-size:28px;font-weight:800;text-align:center;}
+.auth-sub{font-size:13px;color:var(--mu);margin-top:4px;text-align:center;margin-bottom:32px;}
+.auth-card{background:var(--sf);border:1px solid var(--bd);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;box-shadow:var(--sh2);}
+.auth-tabs{display:flex;margin-bottom:22px;background:var(--bg2);border-radius:var(--rs);padding:3px;}
+.auth-tab{flex:1;background:none;border:none;color:var(--mu);font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:8px 0;cursor:pointer;border-radius:8px;transition:all .2s;}
+.auth-tab.on{background:var(--sf);color:var(--ac);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.inp{width:100%;background:var(--sf2);border:1px solid var(--bd2);border-radius:var(--rs);padding:11px 14px;color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-size:14px;margin-bottom:10px;outline:none;transition:border .2s;}
+.inp:focus{border-color:var(--ac);background:var(--sf);}
+.inp::placeholder{color:var(--dm);}
+.btn-auth{width:100%;background:linear-gradient(135deg,var(--ac),#7257a8);border:none;color:#fff;padding:12px;border-radius:22px;font-family:'Noto Sans KR',sans-serif;font-size:14px;font-weight:500;cursor:pointer;margin-top:4px;box-shadow:0 4px 14px rgba(139,107,191,0.3);}
+.auth-forget{text-align:center;margin-top:14px;font-size:12px;color:var(--dm);cursor:pointer;}
+.auth-forget:hover{color:var(--ac);}
+.auth-err{font-size:12px;color:var(--ac3);margin-bottom:10px;text-align:center;min-height:16px;}
+.auth-keep{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mu);margin:-2px 0 10px;}
+.auth-keep input{accent-color:#8b6bbf;}
+
+/* MAIN */
+#mainApp{display:none;}
+.hdr{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--bd);margin-bottom:24px;}
+.logo-row{display:flex;align-items:center;gap:10px;}
+.logo-dot{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.logo-name{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
+.logo-sub{font-size:10px;color:var(--dm);letter-spacing:1.5px;text-transform:uppercase;}
+.user-row{display:flex;align-items:center;gap:10px;}
+.user-name{font-size:12px;color:var(--mu);}
+.btn-sm{background:transparent;border:1px solid var(--bd2);color:var(--mu);padding:5px 14px;border-radius:14px;font-size:11px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
+.btn-sm:hover{border-color:var(--ac);color:var(--ac);}
+.tabs{display:flex;gap:4px;margin-bottom:24px;}
+.tab{flex:1;background:transparent;border:1px solid var(--bd);color:var(--mu);font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:9px 0;cursor:pointer;border-radius:22px;transition:all .2s;}
+.tab.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:500;}
+.panel{display:none;}.panel.on{display:block;}
+.dt{font-size:11px;color:var(--dm);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
+.h1{font-family:'Noto Serif KR',serif;font-size:clamp(22px,5vw,30px);font-weight:800;line-height:1.35;margin-bottom:8px;}
+.sub{font-size:13px;color:var(--mu);margin-bottom:24px;}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh);}
+.card-lbl{font-size:10px;letter-spacing:1.5px;color:var(--dm);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-lbl::after{content:'';flex:1;height:1px;background:var(--bd);}
+.moods{display:flex;flex-wrap:wrap;gap:7px;}
+.mc{background:var(--sf2);border:1px solid var(--bd);border-radius:18px;padding:5px 13px;font-size:12px;color:var(--mu);cursor:pointer;transition:all .2s;font-family:'Noto Sans KR',sans-serif;}
+.mc.on{background:var(--ac-bg);border-color:var(--ac);color:var(--ac);font-weight:500;}
+textarea{width:100%;background:transparent;border:none;outline:none;color:var(--tx);font-family:'Noto Serif KR',serif;font-size:16px;line-height:1.9;resize:none;min-height:140px;max-height:640px;overflow-y:auto;caret-color:var(--ac);}
+textarea::placeholder{color:var(--dm);font-size:15px;}
+.card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);}
+.cnt{font-size:12px;color:var(--dm);}
+.btn{background:linear-gradient(135deg,var(--ac),#7257a8);border:none;color:#fff;padding:10px 24px;border-radius:22px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:inline-flex;align-items:center;gap:7px;box-shadow:0 3px 12px rgba(139,107,191,0.25);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-full{width:100%;justify-content:center;font-size:14px;padding:13px;}
+.loading{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:36px 20px;text-align:center;display:none;}
+.spin{display:inline-block;width:24px;height:24px;border:2.5px solid rgba(139,107,191,0.2);border-top-color:var(--ac);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.steps{display:flex;flex-direction:column;gap:7px;margin-top:14px;}
+.step{font-size:12px;color:var(--dm);display:flex;align-items:center;justify-content:center;gap:7px;}
+.step.go{color:var(--ac);}.step.ok{color:var(--ac2);}
+.out{margin-top:20px;display:none;animation:fu .5s ease;}.out.on{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.oc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px;box-shadow:var(--sh);position:relative;overflow:hidden;}
+.oc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.oc.all::before{background:linear-gradient(90deg,var(--ac),var(--ac2),var(--ac3));}
+.oc.poem::before{background:linear-gradient(90deg,var(--ac2),transparent);}
+.oc.letter::before{background:linear-gradient(90deg,var(--ac3),transparent);}
+.oc.svg-card::before{background:linear-gradient(90deg,var(--gold),transparent);}
+.ol{font-size:10px;letter-spacing:1.5px;color:var(--dm);text-transform:uppercase;margin-bottom:12px;}
+.ot{font-family:'Noto Serif KR',serif;font-size:15px;line-height:1.9;color:var(--tx);white-space:pre-wrap;}
+.os{font-size:13px;color:var(--mu);line-height:1.8;margin-bottom:12px;}
+.e-chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;}
+.e-chip{padding:4px 12px;border-radius:12px;font-size:12px;font-family:'Noto Sans KR',sans-serif;}
+.e-bars{margin-top:10px;}.e-row{margin-bottom:9px;}
+.e-lbl{font-size:12px;color:var(--mu);display:flex;justify-content:space-between;margin-bottom:4px;}
+.e-track{background:var(--bg2);border-radius:3px;height:4px;overflow:hidden;}
+.e-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;}
+@media(max-width:460px){.grid2{grid-template-columns:1fr;}}
+.svg-wrap{width:100%;aspect-ratio:1;border-radius:var(--rs);overflow:hidden;background:var(--bg2);}
+.svg-wrap svg{width:100%;height:100%;display:block;}
+.arch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.arch-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.arch-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh);}
+.arch-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
+.arch-img{width:100%;aspect-ratio:1;display:block;background:var(--bg2);overflow:hidden;}
+.arch-img svg{width:100%;height:100%;}
+.arch-body{padding:10px;}
+.arch-date{font-size:10px;color:var(--dm);margin-bottom:4px;}
+.arch-txt{font-family:'Noto Serif KR',serif;font-size:12px;line-height:1.6;color:var(--mu);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.arch-empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:var(--dm);font-size:13px;line-height:2;}
+.arch-actions{display:flex;gap:6px;margin-top:8px;}
+.arch-act{flex:1;background:var(--sf2);border:1px solid var(--bd);color:var(--mu);font-size:11px;padding:5px 0;border-radius:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
+.arch-act:hover{border-color:var(--ac);color:var(--ac);}
+.arch-act.del:hover{border-color:var(--ac3);color:var(--ac3);}
+.rpt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
+.rpt-stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:16px;text-align:center;}
+.rpt-num{font-size:26px;font-weight:500;color:var(--ac);}
+.rpt-lbl{font-size:11px;color:var(--dm);margin-top:3px;}
+.rpt-poem{background:var(--sf);border:1px solid var(--bd);border-left:3px solid var(--ac2);border-radius:var(--r);padding:22px;}
+.rpt-poem-lbl{font-size:10px;letter-spacing:1.5px;color:var(--ac2);text-transform:uppercase;margin-bottom:12px;}
+.rpt-poem-txt{font-family:'Noto Serif KR',serif;font-size:15px;line-height:2;white-space:pre-wrap;}
+.tag{display:inline-flex;align-items:center;padding:3px 12px;border-radius:12px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
+.tag-ac{background:var(--ac-bg);color:var(--ac);border:1px solid rgba(139,107,191,0.2);}
+.tag-ac2{background:rgba(91,158,142,0.08);color:var(--ac2);border:1px solid rgba(91,158,142,0.2);}
+hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tx);color:#fff;border-radius:var(--rs);padding:10px 20px;font-size:13px;z-index:999;display:none;white-space:nowrap;}
+
+/* MODAL */
+.modal-ov{position:fixed;inset:0;background:rgba(44,38,32,0.45);z-index:1000;align-items:center;justify-content:center;padding:20px;display:none;}
+.modal-ov.on{display:flex;}
+.modal-box{background:var(--sf);border-radius:var(--r);padding:24px;width:100%;max-width:340px;box-shadow:var(--sh2);}
+.modal-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;margin-bottom:10px;}
+.modal-msg{font-size:13px;color:var(--mu);line-height:1.7;margin-bottom:18px;}
+.modal-btns{display:flex;gap:8px;}
+.btn-outline{flex:1;background:transparent;border:1px solid var(--bd2);color:var(--mu);padding:10px;border-radius:20px;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;}
+.btn-outline:hover{border-color:var(--ac);color:var(--ac);}
+.btn-danger{flex:1;background:linear-gradient(135deg,var(--ac3),#a85f42);border:none;color:#fff;padding:10px;border-radius:20px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+.edit-moods{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 14px;}
+
+/* PROFILE */
+.pf-row{display:flex;gap:8px;}
+.pf-row .inp{flex:1;}
+.pf-lbl{font-size:11px;color:var(--dm);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px;}
+.pf-lbl:first-child{margin-top:0;}
+.pf-email{font-size:13px;color:var(--mu);padding:11px 14px;background:var(--sf2);border-radius:var(--rs);border:1px solid var(--bd);}
+.pf-msg{font-size:12px;margin-top:8px;min-height:16px;}
+.pf-msg.ok{color:var(--ac2);}
+.pf-msg.err{color:var(--ac3);}
+.danger-zone{border:1px solid rgba(196,124,94,0.3);border-radius:var(--r);padding:18px;margin-top:24px;}
+.danger-title{font-size:12px;color:var(--ac3);font-weight:500;margin-bottom:6px;}
+.danger-desc{font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.7;}
+
+/* SEARCH + MONTH CALENDAR */
+.search-row{margin-bottom:16px;}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.cal-nav-btn{background:transparent;border:1px solid var(--bd2);color:var(--mu);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;}
+.cal-nav-btn:hover{border-color:var(--ac);color:var(--ac);}
+.cal-title{font-size:13px;color:var(--tx);font-weight:500;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
+.cal-dow{text-align:center;font-size:10px;color:var(--dm);padding:4px 0 8px;}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;font-size:12px;color:var(--tx);border:1px solid transparent;transition:all .15s;}
+.cal-cell.empty{visibility:hidden;pointer-events:none;}
+.cal-cell.has{background:var(--ac-bg);border-color:rgba(139,107,191,0.3);}
+.cal-cell.today{border-color:var(--ac);font-weight:600;}
+.cal-cell.sel{background:var(--ac);border-color:var(--ac);color:#fff;}
+.cal-cell:hover{border-color:var(--ac);}
+.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--ac);margin-top:2px;opacity:0;}
+.cal-cell.has .cal-dot{opacity:1;}
+.cal-cell.sel .cal-dot{background:#fff;}
+
+/* DRAFT */
+.draft-bar{background:var(--ac-bg);border:1px solid rgba(139,107,191,0.3);border-radius:var(--rs);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--ac);}
+.draft-bar span{flex:1;}
+.draft-bar button{background:none;border:none;color:var(--ac);font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;white-space:nowrap;}
+.draft-save-ind{font-size:10px;color:var(--dm);margin-left:8px;}
+
+/* REMINDER */
+.reminder-bar{background:rgba(184,136,42,0.08);border:1px solid rgba(184,136,42,0.3);border-radius:var(--rs);padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;color:var(--gold);}
+.reminder-bar span{flex:1;}
+.reminder-bar button{background:none;border:none;color:var(--gold);font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;white-space:nowrap;}
+
+/* REPORT */
+.seg{display:flex;background:var(--bg2);border-radius:var(--rs);padding:3px;margin-bottom:18px;}
+.seg-btn{flex:1;background:none;border:none;color:var(--mu);font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:8px 0;cursor:pointer;border-radius:8px;}
+.seg-btn.on{background:var(--sf);color:var(--ac);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.stat-empty{text-align:center;color:var(--dm);font-size:13px;padding:24px 0;}
+
+/* TREND CHART */
+.trend-wrap{width:100%;min-height:140px;}
+.trend-svg{width:100%;display:block;}
+.trend-empty{text-align:center;color:var(--dm);font-size:13px;padding:24px 0;}
+
+/* NOTIFICATION SETTINGS */
+.notif-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.notif-status{font-size:12px;color:var(--mu);}
+.notif-status.on{color:var(--ac2);font-weight:500;}
+</style>
+</head>
+<body>
+
+<div id="authScreen">
+  <div class="auth-mark">✦</div>
+  <div class="auth-name">Echo Diary</div>
+  <div class="auth-sub">당신의 하루를 예술로 기록하다</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab on" onclick="authTab('login',this)">로그인</button>
+      <button class="auth-tab" onclick="authTab('signup',this)">회원가입</button>
+    </div>
+    <div class="auth-err" id="authErr"></div>
+    <div id="loginForm">
+      <input class="inp" id="loginEmail" type="email" placeholder="이메일">
+      <input class="inp" id="loginPw" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
+      <label class="auth-keep"><input type="checkbox" id="keepLogin" checked> 로그인 상태 유지</label>
+      <button class="btn-auth" onclick="doLogin()">로그인</button>
+      <div class="auth-forget" onclick="doReset()">비밀번호를 잊으셨나요?</div>
+    </div>
+    <div id="signupForm" style="display:none;">
+      <input class="inp" id="signupName" type="text" placeholder="닉네임">
+      <input class="inp" id="signupEmail" type="email" placeholder="이메일">
+      <input class="inp" id="signupPw" type="password" placeholder="비밀번호 (6자 이상)">
+      <input class="inp" id="signupPw2" type="password" placeholder="비밀번호 확인" onkeydown="if(event.key==='Enter')doSignup()">
+      <button class="btn-auth" onclick="doSignup()">가입하기</button>
+    </div>
+  </div>
+</div>
+
+<div id="mainApp">
+<div class="app">
+  <div class="hdr">
+    <div class="logo-row">
+      <div class="logo-dot">✦</div>
+      <div><div class="logo-name">Echo Diary</div><div class="logo-sub">당신의 하루를 예술로</div></div>
+    </div>
+    <div class="user-row">
+      <span class="user-name" id="uName"></span>
+      <button class="btn-sm" onclick="doLogout()">로그아웃</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="go('write',this)">✦ 일기</button>
+    <button class="tab" onclick="go('archive',this)">보관함</button>
+    <button class="tab" onclick="go('report',this)">리포트</button>
+    <button class="tab" onclick="go('profile',this)">프로필</button>
+  </div>
+
+  <div class="panel on" id="panel-write">
+    <div class="dt" id="dt"></div>
+    <div class="h1">오늘 하루,<br>무슨 일이 있었나요?</div>
+    <div class="sub">있는 그대로 적어주세요.</div>
+    <div class="reminder-bar" id="reminderBar" style="display:none;">
+      <span>🌙 하루를 마무리하며, 오늘의 이야기를 기록해보는 건 어때요?</span>
+      <button onclick="dismissReminder()">닫기</button>
+    </div>
+    <div class="draft-bar" id="draftBar" style="display:none;">
+      <span id="draftBarMsg"></span>
+      <button onclick="restoreDraft()">불러오기</button>
+      <button onclick="dismissDraft()">삭제</button>
+    </div>
+    <div class="card" style="padding-bottom:16px;">
+      <div class="card-lbl">오늘의 첫인상</div>
+      <div class="moods">
+        <div class="mc" data-m="기쁨" onclick="mood(this)">☀ 기쁨</div>
+        <div class="mc" data-m="슬픔" onclick="mood(this)">🌧 슬픔</div>
+        <div class="mc" data-m="우울" onclick="mood(this)">🌫 우울</div>
+        <div class="mc" data-m="불안" onclick="mood(this)">🌪 불안</div>
+        <div class="mc" data-m="평온" onclick="mood(this)">🌊 평온</div>
+        <div class="mc" data-m="설렘" onclick="mood(this)">🌸 설렘</div>
+        <div class="mc" data-m="피로" onclick="mood(this)">🍂 피로</div>
+        <div class="mc" data-m="분노" onclick="mood(this)">🔥 분노</div>
+        <div class="mc" data-m="그리움" onclick="mood(this)">🌙 그리움</div>
+        <div class="mc" data-m="감사" onclick="mood(this)">🕊 감사</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">오늘의 기록</div>
+      <textarea id="txt" placeholder="오늘 하루는... 어땠나요?" oninput="upCnt()"></textarea>
+      <div class="card-foot">
+        <div style="display:flex;align-items:center;"><span class="cnt" id="cnt">0자</span><span class="draft-save-ind" id="draftInd"></span></div>
+        <button class="btn" id="runBtn" onclick="run()">✦ 작품으로 변환하기</button>
+      </div>
+    </div>
+    <div class="loading" id="loading">
+      <div class="spin"></div>
+      <div style="margin-top:12px;font-size:13px;color:var(--mu);">당신의 하루를 예술로 빚는 중...</div>
+      <div class="steps">
+        <div class="step" id="s1">⬡ 감정 분석</div>
+        <div class="step" id="s2">⬡ 시 생성</div>
+        <div class="step" id="s3">⬡ 편지 작성</div>
+        <div class="step" id="s4">⬡ 일러스트 생성</div>
+      </div>
+    </div>
+    <div class="out" id="out">
+      <div class="oc all">
+        <div class="ol">감정 분석</div>
+        <div class="e-chips" id="echips"></div>
+        <div class="os" id="esum"></div>
+        <div class="e-bars" id="ebars"></div>
+      </div>
+      <div class="grid2">
+        <div class="oc poem"><div class="ol">AI 시</div><div class="ot" id="poem"></div></div>
+        <div class="oc svg-card">
+          <div class="ol">AI 일러스트</div>
+          <div class="svg-wrap" id="svgWrap"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--dm);font-size:13px;">준비 중</div></div>
+        </div>
+      </div>
+      <div class="oc letter"><div class="ol">오늘의 나에게 — AI 편지</div><div class="ot" id="letter"></div></div>
+      <button class="btn btn-full" id="saveBtn" onclick="save()">↓ 보관함에 저장하기</button>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-archive">
+    <div class="arch-hdr">
+      <div class="arch-title">나의 작품 보관함</div>
+      <span class="tag tag-ac" id="archCount">0편</span>
+    </div>
+    <div class="cal-hdr">
+      <button class="cal-nav-btn" onclick="calMonthShift(-1)">‹</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="cal-nav-btn" onclick="calMonthShift(1)">›</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="search-row"><input class="inp" id="archSearch" type="text" placeholder="키워드로 검색 (일기 내용, 시, 감정)" oninput="onSearchInput()" style="margin-bottom:0;"></div>
+    <div class="arch-grid" id="archGrid"><div class="arch-empty">아직 저장된 일기가 없습니다.</div></div>
+  </div>
+
+  <div class="panel" id="panel-report">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div style="font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;">나의 감정 여행</div>
+      <span class="tag tag-ac2">Report</span>
+    </div>
+    <div class="rpt-grid">
+      <div class="rpt-stat"><div class="rpt-num" id="r-days">0</div><div class="rpt-lbl">기록한 날</div></div>
+      <div class="rpt-stat"><div class="rpt-num" id="r-words">0</div><div class="rpt-lbl">총 글자 수</div></div>
+      <div class="rpt-stat"><div class="rpt-num" id="r-poems">0</div><div class="rpt-lbl">생성된 시</div></div>
+      <div class="rpt-stat"><div class="rpt-num" id="r-svgs">0</div><div class="rpt-lbl">생성된 그림</div></div>
+    </div>
+    <div class="card">
+      <div class="card-lbl">최근 7일 감정 강도 변화</div>
+      <div class="trend-wrap" id="trendWrap"></div>
+    </div>
+    <div class="seg">
+      <button class="seg-btn on" onclick="setStatPeriod('week',this)">주간 감정 통계</button>
+      <button class="seg-btn" onclick="setStatPeriod('month',this)">월간 감정 통계</button>
+    </div>
+    <div class="card">
+      <div class="card-lbl" id="statChartLbl">이번 주 감정 분포</div>
+      <div class="e-bars" id="statBars"></div>
+    </div>
+    <div class="rpt-poem">
+      <div class="rpt-poem-lbl">✦ 최근 일기의 시</div>
+      <div class="rpt-poem-txt" id="rPoem">일기를 작성하면 여기에 시가 표시됩니다.</div>
+    </div>
+    <hr class="dv">
+    <div style="font-size:12px;color:var(--dm);text-align:center;">월간 단편소설 · 연간 AI 자서전은 프리미엄에서 제공됩니다.</div>
+  </div>
+
+  <div class="panel" id="panel-profile">
+    <div class="dt">MY ACCOUNT</div>
+    <div class="h1">프로필 설정</div>
+    <div class="sub">계정 정보를 관리하세요.</div>
+
+    <div class="card">
+      <div class="card-lbl">이메일</div>
+      <div class="pf-email" id="pfEmail"></div>
+      <div class="pf-lbl">닉네임 변경</div>
+      <div class="pf-row">
+        <input class="inp" id="pfName" type="text" placeholder="닉네임" style="margin-bottom:0;">
+        <button class="btn" style="padding:0 18px;" onclick="changeNickname()">변경</button>
+      </div>
+      <div class="pf-msg" id="pfNameMsg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">비밀번호 변경</div>
+      <input class="inp" id="pfCurPw" type="password" placeholder="현재 비밀번호">
+      <input class="inp" id="pfNewPw" type="password" placeholder="새 비밀번호 (6자 이상)">
+      <input class="inp" id="pfNewPw2" type="password" placeholder="새 비밀번호 확인">
+      <button class="btn btn-full" onclick="changePassword()">비밀번호 변경</button>
+      <div class="pf-msg" id="pfPwMsg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-lbl">저녁 기록 알림</div>
+      <div class="notif-row">
+        <span class="notif-status" id="notifStatus">알림 꺼짐</span>
+        <button class="btn-sm" id="notifOnBtn" onclick="enableEveningNotif()">알림 켜기</button>
+        <button class="btn-sm" id="notifOffBtn" style="display:none;" onclick="disableEveningNotif()">알림 끄기</button>
+      </div>
+      <div class="pf-msg" style="margin-top:10px;">매일 저녁 8시경, 오늘 일기가 없으면 브라우저 알림으로 알려드려요. (이 탭이 열려 있을 때만 동작합니다)</div>
+    </div>
+
+    <div class="danger-zone">
+      <div class="danger-title">위험 구역</div>
+      <div class="danger-desc">회원 탈퇴 시 모든 일기와 계정 정보가 영구적으로 삭제되며 복구할 수 없습니다.</div>
+      <button class="btn-danger" style="width:100%;" onclick="openDeleteAccountModal()">회원 탈퇴</button>
+    </div>
+  </div>
+</div>
+</div>
+<div class="notif" id="notif"></div>
+
+<div class="modal-ov" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">확인</div>
+    <div class="modal-msg" id="confirmMsg"></div>
+    <div class="modal-btns">
+      <button class="btn-outline" onclick="closeConfirmModal()">취소</button>
+      <button class="btn-danger" onclick="doConfirmOk()">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="editModal">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-title">일기 수정</div>
+    <div class="edit-moods" id="editMoods"></div>
+    <textarea id="editTxt" style="min-height:160px;border:1px solid var(--bd2);border-radius:var(--rs);padding:12px;background:var(--sf2);font-size:14px;"></textarea>
+    <div class="modal-btns" style="margin-top:16px;">
+      <button class="btn-outline" onclick="closeEditModal()">취소</button>
+      <button class="btn" style="flex:1;justify-content:center;" onclick="saveEditEntry()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-ov" id="pwConfirmModal">
+  <div class="modal-box">
+    <div class="modal-title">회원 탈퇴</div>
+    <div class="modal-msg">보안을 위해 현재 비밀번호를 입력해주세요. 탈퇴 시 모든 일기가 함께 삭제됩니다.</div>
+    <input class="inp" id="pwConfirmInput" type="password" placeholder="현재 비밀번호">
+    <div class="pf-msg err" id="pwConfirmMsg"></div>
+    <div class="modal-btns" style="margin-top:8px;">
+      <button class="btn-outline" onclick="closePwConfirmModal()">취소</button>
+      <button class="btn-danger" onclick="confirmDeleteAccount()">탈퇴</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+         signOut, onAuthStateChanged, sendPasswordResetEmail, updateProfile,
+         setPersistence, browserLocalPersistence, browserSessionPersistence,
+         EmailAuthProvider, reauthenticateWithCredential, updatePassword, deleteUser }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serverTimestamp,
+         doc, updateDoc, deleteDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ── Firebase 설정
+const app = initializeApp({
+  apiKey: "AIzaSyC-yPnYVV9EyDhejmo4dOs1JaeuzU4XsEs",
+  authDomain: "echo-diary-526fe.firebaseapp.com",
+  projectId: "echo-diary-526fe",
+  storageBucket: "echo-diary-526fe.firebasestorage.app",
+  messagingSenderId: "35136241164",
+  appId: "1:35136241164:web:ca5e51dcc41d1626d27829"
+});
+const auth = getAuth(app);
+const db = getFirestore(app);
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+// ── Vercel Serverless API 호출
+async function ai(sys, usr) {
+  const r = await fetch("/api/ai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ system: sys, user: usr, isSvg: false })
+  });
+  if (!r.ok) throw new Error("API 오류 " + r.status);
+  const d = await r.json();
+  if (d.error) throw new Error(d.error);
+  return d.result;
+}
+
+async function aiSvg(sys, usr) {
+  const r = await fetch("/api/ai", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ system: sys, user: usr, isSvg: true })
+  });
+  if (!r.ok) throw new Error("API 오류 " + r.status);
+  const d = await r.json();
+  if (d.error) throw new Error(d.error);
+  return d.result;
+}
+
+// ── 상태
+let user=null, moods=[], cur=null, entries=[];
+let selectedDateKey=null, searchKw="", calViewYear=null, calViewMonth=null;
+let statPeriod="week", editingId=null, confirmCb=null, draftTimer=null;
+const CC=["var(--ac)","var(--ac2)","var(--ac3)","var(--gold)","#9ab"];
+const MOOD_ICON={"기쁨":"☀","슬픔":"🌧","우울":"🌫","불안":"🌪","평온":"🌊","설렘":"🌸","피로":"🍂","분노":"🔥","그리움":"🌙","감사":"🕊"};
+const MOOD_ALL=Object.keys(MOOD_ICON);
+
+// ── 날짜
+const d=new Date(), DAY=["일","월","화","수","목","금","토"];
+document.getElementById("dt").textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${DAY[d.getDay()]}요일`;
+
+// ── Auth 상태 감지
+onAuthStateChanged(auth, async u => {
+  user = u;
+  if (u) {
+    document.getElementById("authScreen").style.display = "none";
+    document.getElementById("mainApp").style.display = "block";
+    document.getElementById("uName").textContent = u.displayName || u.email.split("@")[0];
+    document.getElementById("pfEmail").textContent = u.email;
+    document.getElementById("pfName").value = u.displayName || "";
+    await loadEntries();
+    renderArchiveGrid(); drawReport(); drawMonthCal(); loadDraft(); checkEveningReminder(); updateNotifUI();
+  } else {
+    document.getElementById("authScreen").style.display = "flex";
+    document.getElementById("mainApp").style.display = "none";
+  }
+});
+
+// ── Auth 함수
+window.authTab = (m,el) => {
+  document.querySelectorAll(".auth-tab").forEach(t=>t.classList.remove("on")); el.classList.add("on");
+  document.getElementById("loginForm").style.display = m==="login"?"block":"none";
+  document.getElementById("signupForm").style.display = m==="signup"?"block":"none";
+  document.getElementById("authErr").textContent = "";
+};
+window.doLogin = async () => {
+  try {
+    const keep = document.getElementById("keepLogin").checked;
+    await setPersistence(auth, keep ? browserLocalPersistence : browserSessionPersistence);
+    await signInWithEmailAndPassword(auth, document.getElementById("loginEmail").value.trim(), document.getElementById("loginPw").value);
+  }
+  catch(e) { document.getElementById("authErr").textContent = authMsg(e.code); }
+};
+window.doSignup = async () => {
+  const name=document.getElementById("signupName").value.trim();
+  const email=document.getElementById("signupEmail").value.trim();
+  const pw=document.getElementById("signupPw").value;
+  const pw2=document.getElementById("signupPw2").value;
+  if (!name) { document.getElementById("authErr").textContent="닉네임을 입력해주세요."; return; }
+  if (pw !== pw2) { document.getElementById("authErr").textContent="비밀번호가 일치하지 않습니다."; return; }
+  try { const c=await createUserWithEmailAndPassword(auth,email,pw); await updateProfile(c.user,{displayName:name}); }
+  catch(e) { document.getElementById("authErr").textContent=authMsg(e.code); }
+};
+window.doReset = async () => {
+  const email=document.getElementById("loginEmail").value.trim();
+  if (!email) { document.getElementById("authErr").textContent="이메일을 먼저 입력해주세요."; return; }
+  await sendPasswordResetEmail(auth, email);
+  document.getElementById("authErr").style.color="var(--ac2)";
+  document.getElementById("authErr").textContent="재설정 메일을 발송했습니다.";
+};
+window.doLogout = () => signOut(auth);
+function authMsg(c) {
+  return {"auth/user-not-found":"등록되지 않은 이메일","auth/wrong-password":"비밀번호 오류","auth/email-already-in-use":"이미 사용 중인 이메일","auth/weak-password":"비밀번호 6자 이상","auth/invalid-credential":"이메일 또는 비밀번호를 확인해주세요","auth/requires-recent-login":"다시 로그인 후 시도해주세요.","auth/too-many-requests":"잠시 후 다시 시도해주세요."}[c]||"오류: "+c;
+}
+
+// ── 네비게이션
+window.go = (n,el) => {
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  document.getElementById("panel-"+n).classList.add("on"); el.classList.add("on");
+  if(n==="archive"){renderArchiveGrid();drawMonthCal();} if(n==="report")drawReport(); if(n==="write")checkEveningReminder();
+};
+window.mood = el => {
+  const m=el.dataset.m;
+  if(el.classList.contains("on")){el.classList.remove("on");moods=moods.filter(x=>x!==m);}
+  else{if(moods.length>=3){notif("최대 3개");return;}el.classList.add("on");moods.push(m);}
+  scheduleDraftSave();
+};
+window.upCnt = () => {
+  const ta=document.getElementById("txt");
+  document.getElementById("cnt").textContent=ta.value.length+"자";
+  ta.style.height="auto"; ta.style.height=Math.min(ta.scrollHeight,640)+"px";
+  scheduleDraftSave();
+};
+function notif(msg){const n=document.getElementById("notif");n.textContent=msg;n.style.display="block";setTimeout(()=>n.style.display="none",3000);}
+
+const SL={s1:"감정 분석",s2:"시 생성",s3:"편지 작성",s4:"일러스트 생성"};
+function step(id,st){
+  const el=document.getElementById(id),lb=SL[id];
+  if(st==="go"){el.className="step go";el.innerHTML=`<span class="spin" style="width:12px;height:12px;border-width:1.5px;"></span>${lb}`;}
+  else if(st==="ok"){el.className="step ok";el.textContent=`✓ ${lb} 완료`;}
+  else{el.className="step";el.textContent=`⬡ ${lb}`;}
+}
+
+// ── 메인 실행
+window.run = async () => {
+  const txt=document.getElementById("txt").value.trim();
+  if(txt.length<10){notif("10자 이상 작성해주세요.");return;}
+  if(!user){notif("로그인이 필요합니다.");return;}
+  document.getElementById("runBtn").disabled=true;
+  document.getElementById("loading").style.display="block";
+  document.getElementById("out").classList.remove("on");
+  ["s1","s2","s3","s4"].forEach(id=>step(id,"go"));
+  const mh=moods.length?`\n선택 감정: ${moods.join(", ")}` :"";
+  try {
+    // 1. 감정분석
+    const er=await ai("감정 분석 AI. JSON만. 백틱없이.",`일기 감정 분석. JSON만:\n{"emotions":[{"name":"감정명","intensity":숫자}],"summary":"2문장"}\n감정 3~4개.\n일기: ${txt}${mh}`);
+    let eData; try{eData=JSON.parse(er.replace(/\`\`\`json|\`\`\`/g,"").trim());}catch{eData={emotions:[{name:"복합감정",intensity:70}],summary:"오늘 하루의 감정을 분석했습니다."};}
+    step("s1","ok");
+    // 2. 시
+    const poem=await ai("한국 감성 시인. 시 본문만. 제목없이.",`이 일기로 5~7행 한국어 시:\n${txt}`);
+    step("s2","ok");
+    // 3. 편지
+    const letter=await ai("따뜻한 편지 작가. 편지 본문만.",`이 일기를 쓴 사람에게 편지 2단락:\n${txt}`);
+    step("s3","ok");
+    // 4. SVG
+    let svgCode = null;
+    try {
+      const sr = await aiSvg(
+        "You are an SVG artist. Output ONLY raw SVG code starting with <svg. No explanation, no markdown, no backticks. Just the SVG tag.",
+        `Create a watercolor-style SVG illustration for these emotions: ${(eData.emotions||[]).map(e=>e.name).join(", ")}.
+Requirements:
+- viewBox="0 0 300 300" width="300" height="300"
+- Use <defs> with radialGradient and linearGradient elements
+- Soft pastel colors matching the emotion
+- At least 15 shape elements (circles, ellipses, paths, rects)
+- NO text elements
+- Start directly with <svg, end with </svg>`
+      );
+      if (sr && typeof sr === "string" && sr.includes("<svg")) {
+        const start = sr.indexOf("<svg");
+        const end = sr.lastIndexOf("</svg>") + 6;
+        if (end > start) svgCode = sr.slice(start, end);
+      }
+    } catch(svgErr) { console.warn("SVG 생성 실패:", svgErr); }
+    step("s4","ok");
+    cur={emotions:eData.emotions,summary:eData.summary,poem:(poem||"").trim(),letter:(letter||"").trim(),svgCode,content:txt,date:new Date().toISOString(),moods:[...moods]};
+    setSaveBtnMode(false);
+    render(cur); document.getElementById("out").classList.add("on");
+  } catch(e) {
+    notif("오류: "+e.message);
+    ["s1","s2","s3","s4"].forEach(id=>{const el=document.getElementById(id);el.className="step";el.textContent=`⬡ ${SL[id]}`;});
+  }
+  document.getElementById("loading").style.display="none";
+  document.getElementById("runBtn").disabled=false;
+};
+
+function render(r) {
+  const ch=document.getElementById("echips"),ba=document.getElementById("ebars");
+  ch.innerHTML="";ba.innerHTML="";
+  (r.emotions||[]).forEach((e,i)=>{
+    const c=CC[i%CC.length];
+    const x=document.createElement("span");x.className="e-chip";x.style.cssText=`background:${c}15;color:${c};border:1px solid ${c}30;`;x.textContent=e.name;ch.appendChild(x);
+    const row=document.createElement("div");row.className="e-row";
+    row.innerHTML=`<div class="e-lbl"><span>${e.name}</span><span>${e.intensity}%</span></div><div class="e-track"><div class="e-fill" style="width:0%;background:${c};" data-w="${e.intensity}"></div></div>`;
+    ba.appendChild(row);
+  });
+  document.getElementById("esum").textContent=r.summary||"";
+  setTimeout(()=>document.querySelectorAll(".e-fill").forEach(el=>el.style.width=el.dataset.w+"%"),80);
+  document.getElementById("poem").textContent=(r.poem||"").replace(/^#+\s*/gm,"").trim();
+  document.getElementById("letter").textContent=(r.letter||"").replace(/^#+\s*/gm,"").trim();
+  const w=document.getElementById("svgWrap");
+  if(r.svgCode){w.innerHTML=r.svgCode;const s=w.querySelector("svg");if(s)s.style.cssText="width:100%;height:100%;display:block;";}
+}
+
+function setSaveBtnMode(isEdit){
+  const b=document.getElementById("saveBtn");
+  b.style.display="inline-flex";
+  b.textContent = isEdit ? "↻ 수정사항 저장하기" : "↓ 보관함에 저장하기";
+}
+window.save = async () => {
+  if(!cur||!user)return;
+  const content=document.getElementById("txt").value.trim();
+  try{
+    if(cur.id){
+      // 기존 문서 수정 (중복 생성 방지: cur.id가 있으면 updateDoc으로 덮어쓴다)
+      await updateDoc(doc(db,"users",user.uid,"diaries",cur.id),{content,moods:[...moods],updatedAt:serverTimestamp()});
+      const idx=entries.findIndex(e=>e.id===cur.id);
+      if(idx>-1) entries[idx]={...entries[idx],content,moods:[...moods],updatedAt:new Date().toISOString()};
+      notif("✓ 수정사항이 저장되었습니다.");
+    } else {
+      const ref=collection(db,"users",user.uid,"diaries");
+      const dr=await addDoc(ref,{...cur,content,createdAt:serverTimestamp(),updatedAt:serverTimestamp(),dateKey:new Date().toISOString().slice(0,10)});
+      cur.id=dr.id; entries.unshift({...cur,content});
+      notif("✓ 보관함에 저장되었습니다.");
+    }
+    localStorage.removeItem(draftKey());
+    document.getElementById("draftBar").style.display="none";
+    renderArchiveGrid();drawReport();drawMonthCal();checkEveningReminder();
+  }catch(e){notif("저장 실패: "+e.message);}
+};
+
+async function loadEntries(){
+  try{
+    const q=query(collection(db,"users",user.uid,"diaries"),orderBy("createdAt","desc"),limit(100));
+    entries=(await getDocs(q)).docs.map(d=>({...d.data(),id:d.id}));
+  }catch{entries=[];}
+}
+
+// ── 보관함: 검색 + 날짜 필터 + 수정/삭제
+function matchesFilter(e){
+  if(selectedDateKey && !(e.dateKey||e.date||"").startsWith(selectedDateKey)) return false;
+  if(searchKw){
+    const hay=[e.content,e.poem,e.letter,...(e.moods||[]),...(e.emotions||[]).map(x=>x.name)].join(" ").toLowerCase();
+    if(!hay.includes(searchKw)) return false;
+  }
+  return true;
+}
+function archCardHtml(e){
+  const dt=new Date(e.date),ds=`${dt.getMonth()+1}/${dt.getDate()}`;
+  const th=e.svgCode?`<div class="arch-img">${e.svgCode.replace(/<svg/,'<svg style="width:100%;height:100%;"')}</div>`:`<div class="arch-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">🎨</div>`;
+  return `<div class="arch-card" onclick="openEntry('${e.id}')">${th}<div class="arch-body"><div class="arch-date">${ds} ${(e.moods||[]).join(" ")}</div><div class="arch-txt">${(e.poem||e.content||"").replace(/</g,"&lt;")}</div><div class="arch-actions"><button class="arch-act" onclick="editEntry(event,'${e.id}')">수정</button><button class="arch-act del" onclick="deleteEntry(event,'${e.id}')">삭제</button></div></div></div>`;
+}
+function renderArchiveGrid(){
+  const g=document.getElementById("archGrid");
+  document.getElementById("archCount").textContent=entries.length+"편";
+  const list=entries.filter(matchesFilter);
+  if(!list.length){g.innerHTML=`<div class="arch-empty">${entries.length?"조건에 맞는 일기가 없습니다.":"아직 저장된 일기가 없습니다."}</div>`;return;}
+  g.innerHTML=list.map(archCardHtml).join("");
+}
+window.onSearchInput = () => { searchKw=document.getElementById("archSearch").value.trim().toLowerCase(); renderArchiveGrid(); };
+
+// ── 월별 캘린더
+function drawMonthCal(){
+  if(calViewYear==null){const t=new Date();calViewYear=t.getFullYear();calViewMonth=t.getMonth();}
+  const keys=new Set(entries.map(e=>(e.dateKey||e.date||"").slice(0,10)));
+  const today=new Date();today.setHours(0,0,0,0);
+  const first=new Date(calViewYear,calViewMonth,1);
+  const startDow=first.getDay();
+  const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();
+  document.getElementById("calTitle").textContent=`${calViewYear}년 ${calViewMonth+1}월`;
+  let h=DAY.map(x=>`<div class="cal-dow">${x}</div>`).join("");
+  for(let i=0;i<startDow;i++) h+=`<div class="cal-cell empty"></div>`;
+  for(let dd=1;dd<=daysInMonth;dd++){
+    const dt=new Date(calViewYear,calViewMonth,dd);
+    const k=`${calViewYear}-${String(calViewMonth+1).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
+    const isToday=dt.getTime()===today.getTime();
+    const isSel=selectedDateKey===k;
+    h+=`<div class="cal-cell${keys.has(k)?" has":""}${isToday?" today":""}${isSel?" sel":""}" onclick="toggleDateFilter('${k}')">${dd}<div class="cal-dot"></div></div>`;
+  }
+  document.getElementById("calGrid").innerHTML=h;
+}
+window.calMonthShift = (n) => {
+  calViewMonth+=n;
+  if(calViewMonth<0){calViewMonth=11;calViewYear--;}
+  if(calViewMonth>11){calViewMonth=0;calViewYear++;}
+  drawMonthCal();
+};
+window.toggleDateFilter = (k) => {
+  selectedDateKey = selectedDateKey===k ? null : k;
+  drawMonthCal();
+  renderArchiveGrid();
+};
+
+window.openEntry = id => {
+  const e=entries.find(x=>x.id===id);if(!e)return;
+  cur=e;document.getElementById("txt").value=e.content||"";upCnt();
+  moods=[...(e.moods||[])];
+  document.querySelectorAll(".mc").forEach(el=>{el.classList.toggle("on",moods.includes(el.dataset.m));});
+  document.querySelectorAll(".tab")[0].click();
+  render(e);document.getElementById("out").classList.add("on");
+  setSaveBtnMode(true);
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+// ── 일기 수정
+window.editEntry = (ev,id) => {
+  ev.stopPropagation();
+  const e=entries.find(x=>x.id===id); if(!e) return;
+  editingId=id;
+  document.getElementById("editTxt").value=e.content||"";
+  const sel=new Set(e.moods||[]);
+  document.getElementById("editMoods").innerHTML=MOOD_ALL.map(m=>`<div class="mc${sel.has(m)?' on':''}" data-m="${m}" onclick="toggleEditMood(this)">${MOOD_ICON[m]} ${m}</div>`).join("");
+  document.getElementById("editModal").classList.add("on");
+};
+window.toggleEditMood = el => el.classList.toggle("on");
+window.closeEditModal = () => { document.getElementById("editModal").classList.remove("on"); editingId=null; };
+window.saveEditEntry = async () => {
+  if(!editingId) return;
+  const txt=document.getElementById("editTxt").value.trim();
+  if(txt.length<10){notif("10자 이상 작성해주세요.");return;}
+  const moodsSel=[...document.querySelectorAll("#editMoods .mc.on")].map(x=>x.dataset.m);
+  try{
+    await updateDoc(doc(db,"users",user.uid,"diaries",editingId),{content:txt,moods:moodsSel,updatedAt:serverTimestamp()});
+    const idx=entries.findIndex(x=>x.id===editingId);
+    if(idx>-1) entries[idx]={...entries[idx],content:txt,moods:moodsSel,updatedAt:new Date().toISOString()};
+    closeEditModal();
+    renderArchiveGrid(); drawMonthCal(); drawReport();
+    notif("수정되었습니다.");
+  }catch(e){notif("수정 실패: "+e.message);}
+};
+
+// ── 일기 삭제 (확인 팝업)
+window.deleteEntry = (ev,id) => {
+  ev.stopPropagation();
+  openConfirm("일기 삭제","정말 이 일기를 삭제하시겠어요? 이 작업은 되돌릴 수 없습니다.", async ()=>{
+    try{
+      await deleteDoc(doc(db,"users",user.uid,"diaries",id));
+      entries=entries.filter(e=>e.id!==id);
+      renderArchiveGrid(); drawMonthCal(); drawReport();
+      notif("삭제되었습니다.");
+    }catch(e){notif("삭제 실패: "+e.message);}
+  });
+};
+
+// ── 공용 확인 모달
+function openConfirm(title,msg,onOk){
+  document.getElementById("confirmTitle").textContent=title;
+  document.getElementById("confirmMsg").textContent=msg;
+  confirmCb=onOk;
+  document.getElementById("confirmModal").classList.add("on");
+}
+window.closeConfirmModal = () => { document.getElementById("confirmModal").classList.remove("on"); confirmCb=null; };
+window.doConfirmOk = () => { const cb=confirmCb; window.closeConfirmModal(); if(cb) cb(); };
+
+// ── 리포트 / 감정 통계
+function drawReport(){
+  const w=entries.reduce((s,e)=>s+(e.content||"").length,0);
+  document.getElementById("r-days").textContent=entries.length;
+  document.getElementById("r-words").textContent=w.toLocaleString();
+  document.getElementById("r-poems").textContent=entries.filter(e=>e.poem).length;
+  document.getElementById("r-svgs").textContent=entries.filter(e=>e.svgCode).length;
+  if(entries.length&&entries[0].poem)document.getElementById("rPoem").textContent=entries[0].poem;
+  drawStatChart();
+  drawTrendChart();
+}
+
+// ── 최근 7일 감정 강도 변화 (단일 시리즈 라인 차트)
+function drawTrendChart(){
+  const wrap=document.getElementById("trendWrap");
+  if(!wrap) return;
+  const today=new Date(); today.setHours(0,0,0,0);
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const dt=new Date(today); dt.setDate(dt.getDate()-i);
+    const k=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,"0")}-${String(dt.getDate()).padStart(2,"0")}`;
+    const dayEntries=entries.filter(e=>(e.dateKey||"").slice(0,10)===k);
+    let avg=null;
+    const vals=[];
+    dayEntries.forEach(e=>(e.emotions||[]).forEach(em=>vals.push(em.intensity||0)));
+    if(vals.length) avg=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+    days.push({dt,avg,label:DAY[dt.getDay()]});
+  }
+  if(!days.some(d=>d.avg!=null)){ wrap.innerHTML='<div class="trend-empty">최근 7일간 기록이 없습니다.</div>'; return; }
+
+  const W=Math.max(280, wrap.clientWidth||300), H=140, padX=18, padY=18;
+  const stepX=(W-padX*2)/(days.length-1);
+  const yOf=v=>H-padY-(v/100)*(H-padY*2);
+  const pts=days.map((d,i)=>({x:padX+i*stepX, y:d.avg==null?null:yOf(d.avg), d}));
+  const valid=pts.filter(p=>p.y!=null);
+  const pathD=valid.map((p,i)=>(i===0?"M":"L")+p.x.toFixed(1)+","+p.y.toFixed(1)).join(" ");
+  const areaD=valid.length? `M${valid[0].x.toFixed(1)},${(H-padY).toFixed(1)} `+valid.map(p=>`L${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ")+` L${valid[valid.length-1].x.toFixed(1)},${(H-padY).toFixed(1)} Z` : "";
+  let maxIdx=-1; days.forEach((d,i)=>{ if(d.avg!=null && (maxIdx===-1||d.avg>days[maxIdx].avg)) maxIdx=i; });
+  let lastIdx=-1; days.forEach((d,i)=>{ if(d.avg!=null) lastIdx=i; });
+
+  const dots=pts.map((p,i)=>{
+    if(p.y==null) return "";
+    const label=(i===maxIdx||i===lastIdx)?`<text x="${p.x.toFixed(1)}" y="${(p.y-10).toFixed(1)}" text-anchor="middle" font-size="10" fill="var(--ac)" font-family="'Noto Sans KR',sans-serif">${p.d.avg}%</text>`:"";
+    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="var(--sf)" stroke="var(--ac)" stroke-width="2"><title>${p.d.label}요일 ${p.d.dt.getMonth()+1}/${p.d.dt.getDate()} · 평균 강도 ${p.d.avg}%</title></circle>${label}`;
+  }).join("");
+  const dayLabels=days.map((d,i)=>`<text x="${(padX+i*stepX).toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="9" fill="var(--dm)" font-family="'Noto Sans KR',sans-serif">${d.label}</text>`).join("");
+
+  wrap.innerHTML=`<svg class="trend-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    <line x1="${padX}" y1="${H-padY}" x2="${W-padX}" y2="${H-padY}" stroke="var(--bd)" stroke-width="1"/>
+    ${areaD?`<path d="${areaD}" fill="var(--ac)" opacity="0.08" stroke="none"/>`:""}
+    ${pathD?`<path d="${pathD}" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:""}
+    ${dots}
+    ${dayLabels}
+  </svg>`;
+}
+window.setStatPeriod = (p, el) => {
+  statPeriod=p;
+  document.querySelectorAll("#panel-report .seg-btn").forEach(b=>b.classList.remove("on"));
+  el.classList.add("on");
+  document.getElementById("statChartLbl").textContent = p==="week" ? "이번 주 감정 분포" : "이번 달 감정 분포";
+  drawStatChart();
+};
+function drawStatChart(){
+  const now=new Date(); now.setHours(0,0,0,0);
+  let inRange;
+  if(statPeriod==="week"){
+    const from=new Date(now); from.setDate(from.getDate()-6);
+    inRange = e => { const dt=new Date((e.dateKey||e.date||"").slice(0,10)); return dt>=from && dt<=now; };
+  } else {
+    inRange = e => { const dt=new Date((e.dateKey||e.date||"").slice(0,10)); return dt.getFullYear()===now.getFullYear() && dt.getMonth()===now.getMonth(); };
+  }
+  const agg={};
+  entries.filter(inRange).forEach(e=>{
+    (e.emotions||[]).forEach(em=>{
+      if(!agg[em.name]) agg[em.name]={sum:0,cnt:0};
+      agg[em.name].sum += (em.intensity||0);
+      agg[em.name].cnt += 1;
+    });
+  });
+  const rows=Object.entries(agg).map(([name,v])=>({name,avg:Math.round(v.sum/v.cnt)})).sort((a,b)=>b.avg-a.avg).slice(0,8);
+  const ba=document.getElementById("statBars");
+  if(!rows.length){ba.innerHTML='<div class="stat-empty">해당 기간에 기록된 일기가 없습니다.</div>';return;}
+  ba.innerHTML=rows.map((r,i)=>{
+    const c=CC[i%CC.length];
+    return `<div class="e-row"><div class="e-lbl"><span>${r.name}</span><span>${r.avg}%</span></div><div class="e-track"><div class="e-fill" style="width:0%;background:${c};" data-w="${r.avg}"></div></div></div>`;
+  }).join("");
+  setTimeout(()=>ba.querySelectorAll(".e-fill").forEach(el=>el.style.width=el.dataset.w+"%"),80);
+}
+
+// ── 프로필: 닉네임 / 비밀번호 / 탈퇴
+window.changeNickname = async () => {
+  const name=document.getElementById("pfName").value.trim();
+  const msg=document.getElementById("pfNameMsg");
+  msg.className="pf-msg"; msg.textContent="";
+  if(!name){msg.className="pf-msg err";msg.textContent="닉네임을 입력해주세요.";return;}
+  try{
+    await updateProfile(auth.currentUser,{displayName:name});
+    document.getElementById("uName").textContent=name;
+    msg.className="pf-msg ok"; msg.textContent="닉네임이 변경되었습니다.";
+  }catch(e){msg.className="pf-msg err"; msg.textContent="오류: "+e.message;}
+};
+window.changePassword = async () => {
+  const curPw=document.getElementById("pfCurPw").value;
+  const np=document.getElementById("pfNewPw").value;
+  const np2=document.getElementById("pfNewPw2").value;
+  const msg=document.getElementById("pfPwMsg");
+  msg.className="pf-msg"; msg.textContent="";
+  if(!curPw||!np){msg.className="pf-msg err";msg.textContent="모든 항목을 입력해주세요.";return;}
+  if(np.length<6){msg.className="pf-msg err";msg.textContent="새 비밀번호는 6자 이상이어야 합니다.";return;}
+  if(np!==np2){msg.className="pf-msg err";msg.textContent="새 비밀번호가 일치하지 않습니다.";return;}
+  try{
+    const cred=EmailAuthProvider.credential(auth.currentUser.email,curPw);
+    await reauthenticateWithCredential(auth.currentUser,cred);
+    await updatePassword(auth.currentUser,np);
+    msg.className="pf-msg ok"; msg.textContent="비밀번호가 변경되었습니다.";
+    document.getElementById("pfCurPw").value="";document.getElementById("pfNewPw").value="";document.getElementById("pfNewPw2").value="";
+  }catch(e){msg.className="pf-msg err"; msg.textContent=authMsg(e.code);}
+};
+window.openDeleteAccountModal = () => {
+  document.getElementById("pwConfirmInput").value="";
+  document.getElementById("pwConfirmMsg").textContent="";
+  document.getElementById("pwConfirmModal").classList.add("on");
+};
+window.closePwConfirmModal = () => document.getElementById("pwConfirmModal").classList.remove("on");
+window.confirmDeleteAccount = async () => {
+  const pw=document.getElementById("pwConfirmInput").value;
+  const msg=document.getElementById("pwConfirmMsg");
+  if(!pw){msg.textContent="비밀번호를 입력해주세요.";return;}
+  try{
+    const cred=EmailAuthProvider.credential(auth.currentUser.email,pw);
+    await reauthenticateWithCredential(auth.currentUser,cred);
+    const snap=await getDocs(collection(db,"users",user.uid,"diaries"));
+    await Promise.all(snap.docs.map(dc=>deleteDoc(dc.ref)));
+    localStorage.removeItem(draftKey());
+    await deleteUser(auth.currentUser);
+    closePwConfirmModal();
+  }catch(e){msg.textContent=authMsg(e.code);}
+};
+
+// ── 임시저장 (localStorage 자동저장)
+function draftKey(){ return "echoDraft_"+(user?user.uid:"anon"); }
+function saveDraftNow(){
+  const txt=document.getElementById("txt").value;
+  if(!txt.trim()){ localStorage.removeItem(draftKey()); return; }
+  localStorage.setItem(draftKey(), JSON.stringify({txt,moods,savedAt:Date.now()}));
+  const ind=document.getElementById("draftInd");
+  if(ind) ind.textContent="임시저장됨 "+new Date().toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});
+}
+function scheduleDraftSave(){
+  clearTimeout(draftTimer);
+  draftTimer=setTimeout(saveDraftNow,3000);
+}
+function loadDraft(){
+  try{
+    const raw=localStorage.getItem(draftKey());
+    if(!raw) return;
+    const dft=JSON.parse(raw);
+    if(!dft.txt || !dft.txt.trim()) return;
+    if(document.getElementById("txt").value.trim()) return;
+    document.getElementById("draftBar").style.display="flex";
+    document.getElementById("draftBarMsg").textContent=`임시 저장된 일기가 있습니다. (${new Date(dft.savedAt).toLocaleString("ko-KR")})`;
+    window._pendingDraft=dft;
+  }catch{}
+}
+window.restoreDraft = () => {
+  const dft=window._pendingDraft; if(!dft) return;
+  document.getElementById("txt").value=dft.txt||""; upCnt();
+  moods=[...(dft.moods||[])];
+  document.querySelectorAll(".mc").forEach(el=>{el.classList.toggle("on",moods.includes(el.dataset.m));});
+  document.getElementById("draftBar").style.display="none";
+};
+window.dismissDraft = () => {
+  localStorage.removeItem(draftKey());
+  document.getElementById("draftBar").style.display="none";
+};
+
+// ── 저녁 기록 알림
+function todayKeyStr(){
+  const n=new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;
+}
+function checkEveningReminder(){
+  const el=document.getElementById("reminderBar");
+  if(!el || !user) return;
+  const tk=todayKeyStr();
+  const dismissed=sessionStorage.getItem("echoReminderDismissed")===tk;
+  const hasToday=entries.some(e=>(e.dateKey||"").slice(0,10)===tk);
+  const isWritePanelOn=document.getElementById("panel-write").classList.contains("on");
+  el.style.display=(new Date().getHours()>=18 && !hasToday && !dismissed && isWritePanelOn) ? "flex" : "none";
+}
+window.dismissReminder = () => {
+  sessionStorage.setItem("echoReminderDismissed", todayKeyStr());
+  document.getElementById("reminderBar").style.display="none";
+};
+setInterval(checkEveningReminder, 5*60*1000);
+
+// ── 브라우저 알림 (매일 저녁 8시경, 이 탭이 열려 있을 때만 동작)
+function updateNotifUI(){
+  const statusEl=document.getElementById("notifStatus");
+  const onBtn=document.getElementById("notifOnBtn"), offBtn=document.getElementById("notifOffBtn");
+  if(!statusEl) return;
+  if(!("Notification" in window)){
+    statusEl.textContent="이 브라우저는 알림을 지원하지 않습니다.";
+    onBtn.style.display="none"; offBtn.style.display="none";
+    return;
+  }
+  const enabled = localStorage.getItem("echoNotifyEnabled")==="1" && Notification.permission==="granted";
+  statusEl.textContent = enabled ? "알림 켜짐" : (Notification.permission==="denied" ? "브라우저에서 알림이 차단되었습니다" : "알림 꺼짐");
+  statusEl.classList.toggle("on", enabled);
+  onBtn.style.display = enabled?"none":"inline-flex";
+  offBtn.style.display = enabled?"inline-flex":"none";
+}
+window.enableEveningNotif = async () => {
+  if(!("Notification" in window)){ notif("이 브라우저는 알림을 지원하지 않습니다."); return; }
+  try{
+    const perm = await Notification.requestPermission();
+    if(perm==="granted"){ localStorage.setItem("echoNotifyEnabled","1"); notif("저녁 알림이 활성화되었습니다."); }
+    else { notif("알림 권한이 거부되었습니다."); }
+  }catch(e){ notif("알림 설정 실패: "+e.message); }
+  updateNotifUI();
+};
+window.disableEveningNotif = () => {
+  localStorage.removeItem("echoNotifyEnabled");
+  updateNotifUI();
+  notif("저녁 알림이 꺼졌습니다.");
+};
+function checkDailyNotification(){
+  if(!("Notification" in window) || Notification.permission!=="granted") return;
+  if(localStorage.getItem("echoNotifyEnabled")!=="1") return;
+  if(new Date().getHours()!==20) return;
+  const tk=todayKeyStr();
+  if(localStorage.getItem("echoNotifiedDate")===tk) return;
+  if(entries.some(e=>(e.dateKey||"").slice(0,10)===tk)) return;
+  const n=new Notification("Echo Diary", { body:"오늘 하루를 기록해보세요 🌙" });
+  n.onclick=()=>window.focus();
+  localStorage.setItem("echoNotifiedDate", tk);
+}
+setInterval(checkDailyNotification, 60*1000);
+</script>
+</body>
+</html>
