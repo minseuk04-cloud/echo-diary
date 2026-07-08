@@ -71,7 +71,7 @@ tailwind.config = {
 #authScreen .auth-tab.on{background:#fff;color:#33447c;box-shadow:0 1px 4px rgba(0,0,0,.08);}
 
 /* ── 온보딩 (최초 1회) ── */
-#onboardScreen{position:fixed;inset:0;z-index:2000;background:#fcf9f4;display:none;}
+#onboardScreen{position:fixed;inset:0;z-index:2000;background:#fcf9f4;display:none;overflow-y:auto;}
 #onboardScreen .watercolor-canvas{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 30%,rgba(181,196,255,0.15) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(186,236,232,0.15) 0%,transparent 40%),radial-gradient(circle at 50% 50%,rgba(255,218,214,0.1) 0%,transparent 60%);filter:blur(60px);}
 #onboardScreen .onboard-btn{transition:transform .3s;}
 #onboardScreen .onboard-btn:hover{transform:scale(1.02);}
@@ -348,7 +348,7 @@ hr.dv{border:none;border-top:1px solid #e5e2dd;margin:24px 0;}
 
 <div id="onboardScreen" class="flex flex-col antialiased">
   <div class="watercolor-canvas"></div>
-  <main class="flex-grow flex flex-col items-center justify-center px-container-padding text-center relative z-10 py-12" style="min-height:100vh;">
+  <main class="flex-grow flex flex-col items-center justify-center px-container-padding text-center relative z-10 py-12">
     <div class="relative w-full mb-12 flex items-center justify-center" style="max-width:400px;aspect-ratio:1;">
       <div class="absolute inset-0 rounded-full opacity-60" style="background:radial-gradient(circle,rgba(226,220,253,0.3),rgba(186,236,232,0.2));filter:blur(60px);"></div>
       <div class="relative z-10 w-full h-full flex flex-col items-center justify-center float-animation">
