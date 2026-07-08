@@ -1,0 +1,16 @@
+{
+  "name": "Echo Diary",
+  "short_name": "에코다이어리",
+  "description": "당신의 감정을 시와 수채화로 기록하는 AI 다이어리",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fcf9f4",
+  "theme_color": "#33447c",
+  "lang": "ko",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

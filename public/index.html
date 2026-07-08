@@ -4,13 +4,86 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Echo Diary</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#33447c">
+<link rel="icon" href="/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- ══ Stitch Design System (EB Garamond + Plus Jakarta Sans) ══ -->
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "primary-container": "#4b5c96", "on-error": "#ffffff", "on-tertiary-fixed-variant": "#1c4e4c",
+        "on-primary-container": "#cfd8ff", "on-secondary-fixed": "#1b1830", "secondary-fixed-dim": "#c8c3e3",
+        "on-tertiary-fixed": "#00201e", "surface-dim": "#dcdad5", "on-tertiary": "#ffffff",
+        "surface-container": "#f0ede9", "primary": "#33447c", "inverse-primary": "#b5c4ff",
+        "tertiary": "#1c4f4c", "inverse-on-surface": "#f3f0eb", "surface-container-high": "#ebe8e3",
+        "on-background": "#1c1c19", "background": "#fcf9f4", "on-error-container": "#93000a",
+        "primary-fixed": "#dce1ff", "surface-container-low": "#f6f3ee", "secondary-container": "#e2dcfd",
+        "on-secondary-container": "#635f7b", "primary-fixed-dim": "#b5c4ff", "tertiary-fixed-dim": "#9ed0cc",
+        "surface-bright": "#fcf9f4", "on-surface": "#1c1c19", "inverse-surface": "#31302d",
+        "tertiary-fixed": "#baece8", "on-secondary": "#ffffff", "surface-variant": "#e5e2dd",
+        "surface": "#fcf9f4", "secondary-fixed": "#e5deff", "on-surface-variant": "#454650",
+        "on-tertiary-container": "#b1e3df", "surface-container-highest": "#e5e2dd", "tertiary-container": "#376764",
+        "outline-variant": "#c5c6d1", "on-primary-fixed-variant": "#32447c", "error-container": "#ffdad6",
+        "on-secondary-fixed-variant": "#47445e", "outline": "#757681", "on-primary-fixed": "#00164e",
+        "surface-container-lowest": "#ffffff", "error": "#ba1a1a", "secondary": "#5f5b77",
+        "on-primary": "#ffffff", "surface-tint": "#4b5c96"
+      },
+      borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+      spacing: { unit: "8px", "section-gap": "40px", gutter: "16px", "container-padding": "24px" },
+      fontFamily: {
+        "headline-md": ["EB Garamond"], "headline-lg-mobile": ["EB Garamond"], "body-lg": ["Plus Jakarta Sans"],
+        "display-lg": ["EB Garamond"], "label-md": ["Plus Jakarta Sans"], "headline-lg": ["EB Garamond"],
+        "body-md": ["Plus Jakarta Sans"]
+      },
+      fontSize: {
+        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "500"}],
+        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "500"}],
+        "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "500"}],
+        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+/* ── Stitch shared components ── */
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;}
+.watercolor-blur{filter:blur(80px);opacity:0.5;pointer-events:none;z-index:0;}
+.glass-panel{background:rgba(255,255,255,0.4);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.2);}
+.glass-card{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);box-shadow:0 4px 24px rgba(75,92,150,0.05);}
+.input-underline-focus{position:relative;}
+.input-underline-focus::after{content:'';position:absolute;bottom:0;left:50%;width:0;height:1px;background-color:#4b5c96;transition:all 0.4s ease;transform:translateX(-50%);}
+.input-underline-focus:focus-within::after{width:100%;}
+@keyframes stitch-float{0%{transform:translateY(0px);}50%{transform:translateY(-10px);}100%{transform:translateY(0px);}}
+.float-animation{animation:stitch-float 6s ease-in-out infinite;}
+#authScreen .auth-tab{flex:1;background:none;border:none;padding:10px 0;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.05em;color:#454650;cursor:pointer;transition:all .2s;}
+#authScreen .auth-tab.on{background:#fff;color:#33447c;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+
+/* ── 온보딩 (최초 1회) ── */
+#onboardScreen{position:fixed;inset:0;z-index:2000;background:#fcf9f4;display:none;}
+#onboardScreen .watercolor-canvas{position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 20% 30%,rgba(181,196,255,0.15) 0%,transparent 40%),radial-gradient(circle at 80% 70%,rgba(186,236,232,0.15) 0%,transparent 40%),radial-gradient(circle at 50% 50%,rgba(255,218,214,0.1) 0%,transparent 60%);filter:blur(60px);}
+#onboardScreen .onboard-btn{transition:transform .3s;}
+#onboardScreen .onboard-btn:hover{transform:scale(1.02);}
+.onboard-particle{position:absolute;background:rgba(51,68,124,0.12);border-radius:9999px;filter:blur(2px);pointer-events:none;}
+@keyframes onboard-particle-float{0%{transform:translateY(0) translateX(0);opacity:0;}20%{opacity:0.3;}80%{opacity:0.3;}100%{transform:translateY(-100vh) translateX(50px);opacity:0;}}
+</style>
 <style>
 :root{--bg:#f5f2ee;--bg2:#ede9e3;--sf:#fff;--sf2:#f9f7f4;--bd:rgba(160,140,120,0.15);--bd2:rgba(160,140,120,0.28);--tx:#2c2620;--mu:#7a6e64;--dm:#b0a396;--ac:#8b6bbf;--ac2:#5b9e8e;--ac3:#c47c5e;--gold:#b8882a;--ac-bg:rgba(139,107,191,0.08);--r:16px;--rs:10px;--sh:0 2px 16px rgba(100,80,60,0.08);--sh2:0 4px 24px rgba(100,80,60,0.12);}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',sans-serif;font-weight:300;min-height:100vh;line-height:1.7;}
 body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 10%,rgba(139,107,191,0.06) 0%,transparent 50%),radial-gradient(ellipse at 80% 80%,rgba(91,158,142,0.05) 0%,transparent 50%);pointer-events:none;z-index:0;}
-.app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:0 20px 80px;}
+.app{position:relative;z-index:1;max-width:800px;margin:0 auto;padding:96px 24px 112px;}
 
 /* AUTH */
 #authScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;position:relative;z-index:1;}
@@ -33,19 +106,62 @@ body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellips
 
 /* MAIN */
 #mainApp{display:none;}
-.hdr{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-bottom:1px solid var(--bd);margin-bottom:24px;}
+.hdr{position:fixed;top:0;left:0;right:0;z-index:50;height:64px;background:rgba(252,249,244,0.8);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 4px 20px rgba(75,92,150,0.08);display:flex;align-items:center;justify-content:space-between;padding:0 24px;}
 .logo-row{display:flex;align-items:center;gap:10px;}
-.logo-dot{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ac),var(--ac2));display:flex;align-items:center;justify-content:center;font-size:14px;}
-.logo-name{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
-.logo-sub{font-size:10px;color:var(--dm);letter-spacing:1.5px;text-transform:uppercase;}
-.user-row{display:flex;align-items:center;gap:10px;}
-.user-name{font-size:12px;color:var(--mu);}
-.btn-sm{background:transparent;border:1px solid var(--bd2);color:var(--mu);padding:5px 14px;border-radius:14px;font-size:11px;font-family:'Noto Sans KR',sans-serif;cursor:pointer;}
-.btn-sm:hover{border-color:var(--ac);color:var(--ac);}
-.tabs{display:flex;gap:4px;margin-bottom:24px;}
-.tab{flex:1;background:transparent;border:1px solid var(--bd);color:var(--mu);font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:9px 0;cursor:pointer;border-radius:22px;transition:all .2s;}
-.tab.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:500;}
+.logo-dot{width:36px;height:36px;border-radius:12px;background:#33447c;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;}
+.logo-name{font-family:'EB Garamond',serif;font-size:22px;font-weight:600;color:#33447c;letter-spacing:-0.01em;}
+.logo-sub{display:none;}
+.user-row{display:flex;align-items:center;gap:8px;}
+.user-name{font-size:12px;color:#454650;font-family:'Plus Jakarta Sans',sans-serif;}
+.hdr .btn-sm{background:none;border:none;color:#454650;width:36px;height:36px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.hdr .btn-sm:hover{background:rgba(51,68,124,0.08);color:#33447c;}
+.tabs{position:fixed;bottom:0;left:0;right:0;z-index:50;height:80px;border-radius:20px 20px 0 0;background:rgba(240,237,233,0.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,0.2);box-shadow:0 -4px 20px rgba(75,92,150,0.08);display:flex;align-items:center;justify-content:space-around;padding:0 12px;gap:2px;}
+.tab{flex:none;background:none;border:none;color:rgba(99,95,123,0.6);font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;padding:8px 16px;cursor:pointer;border-radius:9999px;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.tab.on{background:#e2dcfd;color:#635f7b;font-weight:600;}
+.tab.on .material-symbols-outlined{font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24;}
 .panel{display:none;}.panel.on{display:block;}
+
+/* ── #panel-write (Stitch) ── */
+#panel-write .dt{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(69,70,80,0.6);margin-bottom:4px;}
+#panel-write .h1{font-family:'EB Garamond',serif;font-size:32px;font-weight:500;color:#33447c;line-height:1.25;margin-bottom:16px;}
+#panel-write .sub{display:none;}
+#panel-write .reminder-bar,#panel-write .draft-bar{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:16px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#33447c;}
+#panel-write .reminder-bar span,#panel-write .draft-bar span{flex:1;}
+#panel-write .reminder-bar button,#panel-write .draft-bar button{background:none;border:none;color:#33447c;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline;white-space:nowrap;}
+#panel-write .card{background:rgba(246,243,238,0.6);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,0.4);border-radius:24px;padding:24px;margin-bottom:16px;box-shadow:0 1px 3px rgba(75,92,150,0.04);}
+#panel-write .card-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:0.05em;color:rgba(69,70,80,0.5);text-transform:uppercase;margin-bottom:14px;font-weight:600;}
+#panel-write .moods{display:flex;flex-wrap:wrap;gap:8px;}
+#panel-write .mc{background:transparent;border:1px solid #c5c6d1;border-radius:9999px;padding:6px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;cursor:pointer;transition:all .2s;}
+#panel-write .mc.on{background:rgba(51,68,124,0.1);border-color:#33447c;color:#33447c;font-weight:600;}
+#panel-write textarea{width:100%;background:transparent;border:none;outline:none;color:#1c1c19;font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;line-height:1.7;resize:none;min-height:220px;max-height:640px;overflow-y:auto;caret-color:#33447c;}
+#panel-write textarea::placeholder{color:rgba(69,70,80,0.3);}
+#panel-write .card-foot{display:flex;align-items:center;justify-content:center;margin-top:16px;padding-top:0;border-top:none;}
+#panel-write .cnt{font-size:11px;color:rgba(69,70,80,0.4);display:none;}
+#panel-write .btn{background:#33447c;border:none;color:#fff;padding:16px 40px;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.05em;cursor:pointer;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 20px rgba(51,68,124,0.2);transition:transform .3s;}
+#panel-write .btn:hover{transform:scale(1.02);}
+#panel-write .btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+#panel-write .btn-full{width:100%;justify-content:center;}
+#panel-write .loading{display:none;background:rgba(255,255,255,0.4);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:32px 20px;text-align:center;}
+#panel-write .spin{border-top-color:#33447c;}
+#panel-write .steps{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:24px;}
+#panel-write .step{background:rgba(255,255,255,0.5);border:1.5px solid transparent;border-radius:14px;padding:14px 8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;transition:all .3s;}
+#panel-write .step.go{border-color:rgba(51,68,124,0.3);background:#fff;color:#33447c;font-weight:600;transform:scale(1.03);}
+#panel-write .step.ok{background:rgba(255,255,255,0.25);color:#1c4f4c;}
+#panel-write .out{margin-top:8px;display:none;animation:fu .5s ease;}#panel-write .out.on{display:block;}
+#panel-write .oc{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:24px;margin-bottom:16px;box-shadow:0 4px 24px rgba(75,92,150,0.05);}
+#panel-write .ol{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:0.05em;color:rgba(69,70,80,0.5);text-transform:uppercase;margin-bottom:14px;font-weight:600;}
+#panel-write .ot{font-family:'EB Garamond',serif;font-size:18px;line-height:1.8;color:#1c1c19;white-space:pre-wrap;}
+#panel-write .os{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#454650;line-height:1.7;margin-bottom:14px;}
+#panel-write .e-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+#panel-write .e-chip{padding:4px 14px;border-radius:9999px;font-size:12px;font-family:'Plus Jakarta Sans',sans-serif;}
+#panel-write .e-bars{margin-top:10px;}#panel-write .e-row{margin-bottom:10px;}
+#panel-write .e-lbl{font-size:12px;color:#454650;display:flex;justify-content:space-between;margin-bottom:4px;font-family:'Plus Jakarta Sans',sans-serif;}
+#panel-write .e-track{background:#e5e2dd;border-radius:9999px;height:4px;overflow:hidden;}
+#panel-write .e-fill{height:100%;border-radius:9999px;transition:width 1s ease;}
+#panel-write .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;}
+@media(max-width:460px){#panel-write .grid2{grid-template-columns:1fr;}}
+#panel-write .svg-wrap{width:100%;aspect-ratio:1;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,#e2dcfd 0%,#baece8 50%,#ffdad6 100%);}
+#panel-write .svg-wrap svg{width:100%;height:100%;display:block;}
 .dt{font-size:11px;color:var(--dm);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;}
 .h1{font-family:'Noto Serif KR',serif;font-size:clamp(22px,5vw,30px);font-weight:800;line-height:1.35;margin-bottom:8px;}
 .sub{font-size:13px;color:var(--mu);margin-bottom:24px;}
@@ -90,73 +206,85 @@ textarea::placeholder{color:var(--dm);font-size:15px;}
 .svg-wrap{width:100%;aspect-ratio:1;border-radius:var(--rs);overflow:hidden;background:var(--bg2);}
 .svg-wrap svg{width:100%;height:100%;display:block;}
 .arch-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.arch-title{font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;}
-.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
-.arch-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s;box-shadow:var(--sh);}
-.arch-card:hover{transform:translateY(-2px);box-shadow:var(--sh2);}
-.arch-img{width:100%;aspect-ratio:1;display:block;background:var(--bg2);overflow:hidden;}
+.arch-title{font-family:'EB Garamond',serif;font-size:32px;font-weight:500;color:#1c1c19;}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;}
+.arch-card{background:transparent;border:none;border-radius:0;overflow:visible;cursor:pointer;transition:all .2s;box-shadow:none;}
+.arch-card:hover .arch-img{transform:scale(1.05);}
+.arch-img{width:100%;aspect-ratio:1;display:block;background:linear-gradient(135deg,#e2dcfd,#baece8,#dce1ff);overflow:hidden;border-radius:20px;box-shadow:0 4px 16px rgba(75,92,150,0.08);transition:transform .5s;position:relative;}
 .arch-img svg{width:100%;height:100%;}
-.arch-body{padding:10px;}
-.arch-date{font-size:10px;color:var(--dm);margin-bottom:4px;}
-.arch-txt{font-family:'Noto Serif KR',serif;font-size:12px;line-height:1.6;color:var(--mu);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.arch-empty{grid-column:1/-1;padding:50px 20px;text-align:center;color:var(--dm);font-size:13px;line-height:2;}
+.arch-body{padding:12px 2px 0;}
+.arch-date{font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:rgba(69,70,80,0.5);margin-bottom:4px;}
+.arch-txt{font-family:'EB Garamond',serif;font-size:15px;line-height:1.5;color:#1c1c19;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:2px;}
+.arch-empty{grid-column:1/-1;padding:60px 20px;text-align:center;color:rgba(69,70,80,0.5);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:2;}
 .arch-actions{display:flex;gap:6px;margin-top:8px;}
-.arch-act{flex:1;background:var(--sf2);border:1px solid var(--bd);color:var(--mu);font-size:11px;padding:5px 0;border-radius:12px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;}
-.arch-act:hover{border-color:var(--ac);color:var(--ac);}
-.arch-act.del:hover{border-color:var(--ac3);color:var(--ac3);}
-.rpt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px;}
-.rpt-stat{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);padding:16px;text-align:center;}
-.rpt-num{font-size:26px;font-weight:500;color:var(--ac);}
-.rpt-lbl{font-size:11px;color:var(--dm);margin-top:3px;}
-.rpt-poem{background:var(--sf);border:1px solid var(--bd);border-left:3px solid var(--ac2);border-radius:var(--r);padding:22px;}
-.rpt-poem-lbl{font-size:10px;letter-spacing:1.5px;color:var(--ac2);text-transform:uppercase;margin-bottom:12px;}
-.rpt-poem-txt{font-family:'Noto Serif KR',serif;font-size:15px;line-height:2;white-space:pre-wrap;}
-.tag{display:inline-flex;align-items:center;padding:3px 12px;border-radius:12px;font-size:11px;font-family:'Noto Sans KR',sans-serif;}
-.tag-ac{background:var(--ac-bg);color:var(--ac);border:1px solid rgba(139,107,191,0.2);}
-.tag-ac2{background:rgba(91,158,142,0.08);color:var(--ac2);border:1px solid rgba(91,158,142,0.2);}
-hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
+.arch-act{flex:1;background:rgba(255,255,255,0.6);border:1px solid #e5e2dd;color:#454650;font-size:11px;padding:6px 0;border-radius:9999px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .2s;}
+.arch-act:hover{border-color:#33447c;color:#33447c;}
+.arch-act.del:hover{border-color:#ba1a1a;color:#ba1a1a;}
+.rpt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:32px;}
+@media(min-width:640px){.rpt-grid{grid-template-columns:repeat(4,1fr);}}
+.rpt-stat{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:20px;text-align:center;box-shadow:0 4px 20px rgba(75,92,150,0.08);}
+.rpt-num{font-family:'EB Garamond',serif;font-size:36px;font-weight:500;color:#33447c;}
+.rpt-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:0.05em;text-transform:uppercase;color:rgba(69,70,80,0.5);margin-top:6px;}
+.rpt-poem{border-radius:24px;padding:1px;background:linear-gradient(135deg,#baece8,#e5deff,#dce1ff);}
+.rpt-poem-inner{background:rgba(252,249,244,0.92);backdrop-filter:blur(8px);border-radius:23px;padding:28px;text-align:center;}
+.rpt-poem-lbl{font-family:'EB Garamond',serif;font-size:15px;color:#33447c;margin-bottom:10px;}
+.rpt-poem-txt{font-family:'EB Garamond',serif;font-style:italic;font-size:16px;line-height:1.9;color:#1c1c19;white-space:pre-wrap;opacity:0.85;}
+hr.dv{border:none;border-top:1px solid #e5e2dd;margin:24px 0;}
 .notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--tx);color:#fff;border-radius:var(--rs);padding:10px 20px;font-size:13px;z-index:999;display:none;white-space:nowrap;}
 
 /* MODAL */
-.modal-ov{position:fixed;inset:0;background:rgba(44,38,32,0.45);z-index:1000;align-items:center;justify-content:center;padding:20px;display:none;}
+.modal-ov{position:fixed;inset:0;background:rgba(28,28,25,0.45);backdrop-filter:blur(2px);z-index:1000;align-items:center;justify-content:center;padding:20px;display:none;}
 .modal-ov.on{display:flex;}
-.modal-box{background:var(--sf);border-radius:var(--r);padding:24px;width:100%;max-width:340px;box-shadow:var(--sh2);}
-.modal-title{font-family:'Noto Serif KR',serif;font-size:17px;font-weight:700;margin-bottom:10px;}
-.modal-msg{font-size:13px;color:var(--mu);line-height:1.7;margin-bottom:18px;}
-.modal-btns{display:flex;gap:8px;}
-.btn-outline{flex:1;background:transparent;border:1px solid var(--bd2);color:var(--mu);padding:10px;border-radius:20px;font-family:'Noto Sans KR',sans-serif;font-size:13px;cursor:pointer;}
-.btn-outline:hover{border-color:var(--ac);color:var(--ac);}
-.btn-danger{flex:1;background:linear-gradient(135deg,var(--ac3),#a85f42);border:none;color:#fff;padding:10px;border-radius:20px;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
-.edit-moods{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 14px;}
+.modal-box{background:rgba(252,249,244,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.4);border-radius:28px;padding:28px;width:100%;max-width:340px;box-shadow:0 20px 60px rgba(75,92,150,0.2);}
+.modal-title{font-family:'EB Garamond',serif;font-size:22px;font-weight:500;color:#1c1c19;margin-bottom:10px;}
+.modal-msg{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#454650;line-height:1.7;margin-bottom:20px;}
+.modal-btns{display:flex;gap:10px;}
+.btn-outline{flex:1;background:transparent;border:1px solid #c5c6d1;color:#454650;padding:12px;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:#33447c;color:#33447c;}
+.btn-danger{flex:1;background:#ba1a1a;border:none;color:#fff;padding:12px;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s;}
+.btn-danger:hover{transform:scale(1.02);}
+.edit-moods{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 16px;}
+#editModal .mc{background:transparent;border:1px solid #c5c6d1;border-radius:9999px;padding:6px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;cursor:pointer;transition:all .2s;}
+#editModal .mc.on{background:rgba(51,68,124,0.1);border-color:#33447c;color:#33447c;font-weight:600;}
+#editModal textarea{width:100%;background:rgba(255,255,255,0.5);border:1px solid #e5e2dd;border-radius:16px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#1c1c19;resize:none;}
+#editModal .btn{background:#33447c;border:none;color:#fff;padding:12px;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;flex:1;transition:transform .2s;}
+#editModal .btn:hover{transform:scale(1.02);}
+.modal-box .inp{background:rgba(255,255,255,0.5);border:1px solid #e5e2dd;border-radius:14px;padding:12px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#1c1c19;margin-bottom:10px;width:100%;}
 
 /* PROFILE */
 .pf-row{display:flex;gap:8px;}
 .pf-row .inp{flex:1;}
-.pf-lbl{font-size:11px;color:var(--dm);margin:14px 0 6px;text-transform:uppercase;letter-spacing:1px;}
+.pf-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;color:rgba(69,70,80,0.5);margin:16px 0 8px;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;}
 .pf-lbl:first-child{margin-top:0;}
-.pf-email{font-size:13px;color:var(--mu);padding:11px 14px;background:var(--sf2);border-radius:var(--rs);border:1px solid var(--bd);}
-.pf-msg{font-size:12px;margin-top:8px;min-height:16px;}
-.pf-msg.ok{color:var(--ac2);}
-.pf-msg.err{color:var(--ac3);}
-.danger-zone{border:1px solid rgba(196,124,94,0.3);border-radius:var(--r);padding:18px;margin-top:24px;}
-.danger-title{font-size:12px;color:var(--ac3);font-weight:500;margin-bottom:6px;}
-.danger-desc{font-size:12px;color:var(--mu);margin-bottom:14px;line-height:1.7;}
+.pf-email{font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#454650;padding:12px 16px;background:rgba(255,255,255,0.5);border-radius:14px;border:1px solid #e5e2dd;}
+.pf-msg{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;margin-top:8px;min-height:16px;}
+.pf-msg.ok{color:#1c4f4c;}
+.pf-msg.err{color:#ba1a1a;}
+.danger-zone{border:1px solid rgba(186,26,26,0.25);border-radius:24px;padding:20px;margin-top:24px;background:rgba(255,218,214,0.15);}
+.danger-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#ba1a1a;font-weight:700;margin-bottom:6px;letter-spacing:0.05em;text-transform:uppercase;}
+.danger-desc{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;margin-bottom:14px;line-height:1.7;}
 
 /* SEARCH + MONTH CALENDAR */
-.search-row{margin-bottom:16px;}
-.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.cal-nav-btn{background:transparent;border:1px solid var(--bd2);color:var(--mu);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:13px;}
-.cal-nav-btn:hover{border-color:var(--ac);color:var(--ac);}
-.cal-title{font-size:13px;color:var(--tx);font-weight:500;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px;}
-.cal-dow{text-align:center;font-size:10px;color:var(--dm);padding:4px 0 8px;}
-.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;cursor:pointer;font-size:12px;color:var(--tx);border:1px solid transparent;transition:all .15s;}
+#panel-archive .search-row{margin-bottom:24px;}
+#panel-archive .search-row .inp{width:100%;background:transparent;border:none;outline:none;padding:8px 0;font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;color:#1c1c19;}
+#panel-archive .search-row .inp::placeholder{color:rgba(69,70,80,0.4);}
+#panel-archive .search-line{width:100%;height:1px;background:#33447c;transform:scaleX(0);transition:transform .3s ease;}
+#panel-archive .search-row .inp:focus~.search-line{transform:scaleX(1);}
+.cal-card{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:24px;margin-bottom:20px;box-shadow:0 4px 24px rgba(75,92,150,0.05);}
+.cal-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.cal-hdr-title{font-family:'EB Garamond',serif;font-size:24px;font-weight:500;color:#1c1c19;}
+.cal-nav-btn{background:transparent;border:none;color:#454650;width:32px;height:32px;border-radius:50%;cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;}
+.cal-nav-btn:hover{background:rgba(51,68,124,0.08);color:#33447c;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px 0;margin-bottom:0;}
+.cal-dow{text-align:center;font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;font-weight:600;color:rgba(69,70,80,0.5);padding:4px 0 12px;}
+.cal-dow:first-child{color:rgba(186,26,26,0.6);}
+.cal-cell{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9999px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;color:#1c1c19;border:1px solid transparent;transition:all .15s;position:relative;}
 .cal-cell.empty{visibility:hidden;pointer-events:none;}
-.cal-cell.has{background:var(--ac-bg);border-color:rgba(139,107,191,0.3);}
-.cal-cell.today{border-color:var(--ac);font-weight:600;}
-.cal-cell.sel{background:var(--ac);border-color:var(--ac);color:#fff;}
-.cal-cell:hover{border-color:var(--ac);}
-.cal-dot{width:4px;height:4px;border-radius:50%;background:var(--ac);margin-top:2px;opacity:0;}
+.cal-cell.has{font-weight:500;}
+.cal-cell.today{border-color:#33447c;font-weight:600;color:#33447c;}
+.cal-cell.sel{background:#33447c;border-color:#33447c;color:#fff;}
+.cal-cell:hover{background:rgba(226,220,253,0.4);}
+.cal-dot{width:5px;height:5px;border-radius:50%;background:#1c4f4c;margin-top:2px;opacity:0;}
 .cal-cell.has .cal-dot{opacity:1;}
 .cal-cell.sel .cal-dot{background:#fff;}
 
@@ -172,10 +300,23 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
 .reminder-bar button{background:none;border:none;color:var(--gold);font-size:12px;font-weight:500;cursor:pointer;text-decoration:underline;white-space:nowrap;}
 
 /* REPORT */
-.seg{display:flex;background:var(--bg2);border-radius:var(--rs);padding:3px;margin-bottom:18px;}
-.seg-btn{flex:1;background:none;border:none;color:var(--mu);font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:8px 0;cursor:pointer;border-radius:8px;}
-.seg-btn.on{background:var(--sf);color:var(--ac);font-weight:500;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
-.stat-empty{text-align:center;color:var(--dm);font-size:13px;padding:24px 0;}
+.seg{display:flex;background:rgba(240,237,233,0.6);border-radius:9999px;padding:4px;margin-bottom:20px;}
+.seg-btn{flex:1;background:none;border:none;color:#454650;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;padding:10px 0;cursor:pointer;border-radius:9999px;transition:all .2s;}
+.seg-btn.on{background:#fff;color:#33447c;font-weight:600;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.stat-empty{text-align:center;color:rgba(69,70,80,0.5);font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;padding:24px 0;}
+#panel-report{position:relative;}
+#panel-report .rpt-hero{font-family:'EB Garamond',serif;font-size:32px;font-weight:500;color:#33447c;margin-bottom:4px;}
+#panel-report .rpt-sub{font-family:'Plus Jakarta Sans',sans-serif;font-style:italic;font-size:14px;color:#454650;opacity:0.8;margin-bottom:32px;}
+#panel-report .card{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:0 4px 20px rgba(75,92,150,0.06);}
+#panel-report .card-lbl{font-family:'EB Garamond',serif;font-size:20px;font-weight:500;color:#33447c;text-transform:none;letter-spacing:0;margin-bottom:20px;}
+#panel-report .card-lbl::after{display:none;}
+#panel-report .e-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;}
+#panel-report .e-track{background:#e5e2dd;border-radius:9999px;height:6px;}
+#panel-report .e-fill{border-radius:9999px;}
+.insight-card{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:16px;padding:16px;display:flex;align-items:flex-start;gap:14px;margin-bottom:12px;}
+.insight-ic{width:36px;height:36px;border-radius:12px;background:rgba(51,68,124,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.insight-txt{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;line-height:1.7;color:#1c1c19;}
+.insight-txt b{color:#33447c;}
 
 /* TREND CHART */
 .trend-wrap{width:100%;min-height:140px;}
@@ -184,62 +325,196 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
 
 /* NOTIFICATION SETTINGS */
 .notif-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
-.notif-status{font-size:12px;color:var(--mu);}
-.notif-status.on{color:var(--ac2);font-weight:500;}
+.notif-status{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#454650;}
+.notif-status.on{color:#1c4f4c;font-weight:600;}
+#panel-profile .btn-sm{background:rgba(255,255,255,0.6);border:1px solid #e5e2dd;color:#33447c;width:auto;height:auto;border-radius:9999px;padding:8px 16px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:600;}
+#panel-profile .btn-sm:hover{border-color:#33447c;background:rgba(51,68,124,0.08);}
+#panel-profile{padding-top:8px;}
+#panel-profile .card{background:rgba(255,255,255,0.4);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.3);border-radius:24px;padding:24px;margin-bottom:16px;box-shadow:0 4px 20px rgba(75,92,150,0.05);}
+#panel-profile .card-lbl{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;letter-spacing:0.05em;color:rgba(69,70,80,0.5);text-transform:uppercase;margin-bottom:14px;font-weight:600;}
+#panel-profile .inp{width:100%;background:rgba(255,255,255,0.5);border:1px solid #e5e2dd;border-radius:14px;padding:12px 14px;color:#1c1c19;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;margin-bottom:10px;outline:none;transition:border .2s;}
+#panel-profile .inp:focus{border-color:#33447c;background:#fff;}
+#panel-profile .inp::placeholder{color:rgba(69,70,80,0.4);}
+#panel-profile .btn{background:#33447c;border:none;color:#fff;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:transform .2s;}
+#panel-profile .btn:hover{transform:scale(1.02);}
+#panel-profile .btn-full{width:100%;padding:14px;text-align:center;}
+.pf-hero{display:flex;flex-direction:column;align-items:center;margin-bottom:32px;}
+.pf-avatar{width:88px;height:88px;border-radius:9999px;background:linear-gradient(135deg,#4b5c96,#33447c);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(51,68,124,0.25);margin-bottom:16px;}
+.pf-name{font-family:'EB Garamond',serif;font-size:28px;font-weight:500;color:#1c1c19;}
+.pf-quote{font-family:'EB Garamond',serif;font-style:italic;font-size:15px;color:#5f5b77;opacity:0.8;margin-top:4px;}
 </style>
 </head>
 <body>
 
-<div id="authScreen">
-  <div class="auth-mark">✦</div>
-  <div class="auth-name">Echo Diary</div>
-  <div class="auth-sub">당신의 하루를 예술로 기록하다</div>
-  <div class="auth-card">
-    <div class="auth-tabs">
-      <button class="auth-tab on" onclick="authTab('login',this)">로그인</button>
-      <button class="auth-tab" onclick="authTab('signup',this)">회원가입</button>
+<div id="onboardScreen" class="flex flex-col antialiased">
+  <div class="watercolor-canvas"></div>
+  <main class="flex-grow flex flex-col items-center justify-center px-container-padding text-center relative z-10 py-12" style="min-height:100vh;">
+    <div class="relative w-full mb-12 flex items-center justify-center" style="max-width:400px;aspect-ratio:1;">
+      <div class="absolute inset-0 rounded-full opacity-60" style="background:radial-gradient(circle,rgba(226,220,253,0.3),rgba(186,236,232,0.2));filter:blur(60px);"></div>
+      <div class="relative z-10 w-full h-full flex flex-col items-center justify-center float-animation">
+        <div class="glass-card relative flex items-center justify-center" style="width:256px;height:256px;border-radius:48px;overflow:hidden;background:linear-gradient(135deg,#e2dcfd,#baece8,#dce1ff);">
+          <span class="material-symbols-outlined" style="font-size:96px;color:#fff;opacity:0.9;">auto_stories</span>
+        </div>
+        <span class="material-symbols-outlined absolute" style="top:48px;left:32px;color:rgba(51,68,124,0.4);font-size:36px;font-variation-settings:'FILL' 1;">auto_awesome</span>
+        <span class="material-symbols-outlined absolute" style="bottom:64px;right:16px;color:rgba(28,79,76,0.3);font-size:30px;">auto_stories</span>
+      </div>
     </div>
-    <div class="auth-err" id="authErr"></div>
-    <div id="loginForm">
-      <input class="inp" id="loginEmail" type="email" placeholder="이메일">
-      <input class="inp" id="loginPw" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')doLogin()">
-      <label class="auth-keep"><input type="checkbox" id="keepLogin" checked> 로그인 상태 유지</label>
-      <button class="btn-auth" onclick="doLogin()">로그인</button>
-      <div class="auth-forget" onclick="doReset()">비밀번호를 잊으셨나요?</div>
+    <div style="max-width:480px;">
+      <h1 style="font-family:'EB Garamond',serif;font-size:clamp(32px,6vw,48px);font-weight:500;color:#33447c;line-height:1.25;letter-spacing:-0.02em;margin-bottom:20px;">
+        당신의 모든 감정은 <br><span style="font-style:italic;color:#1c4f4c;">시가 됩니다</span>
+      </h1>
+      <p style="font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;color:#454650;opacity:0.8;line-height:1.7;">
+        일기를 쓰면 AI가 시와 수채화 그림으로<br>당신의 하루를 기록해 드립니다
+      </p>
     </div>
-    <div id="signupForm" style="display:none;">
-      <input class="inp" id="signupName" type="text" placeholder="닉네임">
-      <input class="inp" id="signupEmail" type="email" placeholder="이메일">
-      <input class="inp" id="signupPw" type="password" placeholder="비밀번호 (6자 이상)">
-      <input class="inp" id="signupPw2" type="password" placeholder="비밀번호 확인" onkeydown="if(event.key==='Enter')doSignup()">
-      <button class="btn-auth" onclick="doSignup()">가입하기</button>
+  </main>
+  <footer class="w-full mx-auto px-container-padding flex flex-col items-center" style="max-width:440px;padding-bottom:64px;padding-top:32px;">
+    <div style="display:flex;gap:8px;margin-bottom:40px;">
+      <div style="width:32px;height:4px;border-radius:9999px;background:#33447c;"></div>
+      <div style="width:8px;height:4px;border-radius:9999px;background:#c5c6d1;"></div>
+      <div style="width:8px;height:4px;border-radius:9999px;background:#c5c6d1;"></div>
     </div>
+    <button class="onboard-btn" onclick="completeOnboarding()" style="width:100%;height:64px;background:#33447c;color:#fff;border:none;border-radius:9999px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.05em;display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:0 8px 20px rgba(51,68,124,0.25);cursor:pointer;">
+      <span>시작하기</span>
+      <span class="material-symbols-outlined" style="font-size:20px;">arrow_forward</span>
+    </button>
+    <p style="margin-top:24px;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(69,70,80,0.6);">
+      이미 계정이 있으신가요? <span style="color:#33447c;font-weight:700;cursor:pointer;text-decoration:underline;" onclick="completeOnboarding()">로그인</span>
+    </p>
+  </footer>
+  <div class="fixed inset-0 pointer-events-none" id="onboardParticles" style="z-index:0;"></div>
+</div>
+
+<div id="authScreen" class="font-body-md text-on-background min-h-screen flex flex-col justify-center items-center relative p-container-padding">
+  <!-- Watercolor Background -->
+  <div class="fixed inset-0 overflow-hidden -z-10 bg-background">
+    <div class="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] rounded-full bg-[#E5DEFF] watercolor-blur"></div>
+    <div class="absolute top-[20%] -right-[15%] w-[50%] h-[50%] rounded-full bg-[#BAECE8] watercolor-blur"></div>
+    <div class="absolute -bottom-[20%] left-[20%] w-[70%] h-[70%] rounded-full bg-[#FFDAD6] watercolor-blur"></div>
   </div>
+  <main class="w-full max-w-[440px] z-10 flex flex-col items-center">
+    <header class="mb-section-gap text-center flex flex-col items-center">
+      <div class="mb-4 w-16 h-16 rounded-3xl bg-primary-container flex items-center justify-center shadow-lg float-animation">
+        <span class="material-symbols-outlined text-white text-4xl">auto_stories</span>
+      </div>
+      <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight mb-2">Echo Diary</h1>
+      <p class="font-body-md text-on-surface-variant max-w-[280px]">당신의 감정이 머무는 곳, <br>에코 다이어리에 오신 것을 환영합니다.</p>
+    </header>
+    <div class="w-full glass-panel rounded-[32px] p-8 shadow-[0_8px_32px_rgba(75,92,150,0.06)]">
+      <div class="flex mb-6 bg-surface-container-low/60 rounded-full p-1">
+        <button class="auth-tab on" onclick="authTab('login',this)">로그인</button>
+        <button class="auth-tab" onclick="authTab('signup',this)">회원가입</button>
+      </div>
+      <div class="font-label-md text-[12px] text-error text-center min-h-[16px] mb-4" id="authErr"></div>
+      <div id="loginForm">
+        <form class="space-y-6" onsubmit="event.preventDefault();doLogin();">
+          <div class="space-y-2">
+            <label class="font-label-md text-label-md text-primary ml-1">이메일</label>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="loginEmail" placeholder="example@echo.com" type="email">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center ml-1">
+              <label class="font-label-md text-label-md text-primary">비밀번호</label>
+              <a class="font-label-md text-[12px] text-on-surface-variant hover:text-primary transition-colors cursor-pointer" onclick="doReset()">비밀번호 찾기</a>
+            </div>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="loginPw" placeholder="••••••••" type="password">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <label class="flex items-center gap-2 font-label-md text-[12px] text-on-surface-variant cursor-pointer">
+            <input type="checkbox" id="keepLogin" checked class="accent-primary w-4 h-4"> 로그인 상태 유지
+          </label>
+          <button class="w-full h-14 bg-primary text-white rounded-full font-label-md text-label-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md flex items-center justify-center gap-2" type="submit">
+            로그인
+            <span class="material-symbols-outlined text-xl">arrow_forward</span>
+          </button>
+        </form>
+      </div>
+      <div id="signupForm" style="display:none;">
+        <form class="space-y-5" onsubmit="event.preventDefault();doSignup();">
+          <div class="space-y-2">
+            <label class="font-label-md text-label-md text-primary ml-1">닉네임</label>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="signupName" placeholder="에코" type="text">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="font-label-md text-label-md text-primary ml-1">이메일</label>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="signupEmail" placeholder="example@echo.com" type="email">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="font-label-md text-label-md text-primary ml-1">비밀번호</label>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="signupPw" placeholder="6자 이상" type="password">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="font-label-md text-label-md text-primary ml-1">비밀번호 확인</label>
+            <div class="input-underline-focus">
+              <input class="w-full bg-transparent border-none px-1 py-3 focus:ring-0 font-body-md text-on-surface placeholder:text-outline-variant/60" id="signupPw2" placeholder="••••••••" type="password">
+              <div class="w-full h-[1px] bg-outline-variant/30"></div>
+            </div>
+          </div>
+          <button class="w-full h-14 bg-primary text-white rounded-full font-label-md text-label-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-md flex items-center justify-center gap-2" type="submit">
+            가입하기
+            <span class="material-symbols-outlined text-xl">arrow_forward</span>
+          </button>
+        </form>
+      </div>
+      <div class="mt-8 pt-6 border-t border-outline-variant/20">
+        <div class="flex flex-col gap-3">
+          <p class="text-center text-[11px] font-label-md text-outline uppercase tracking-widest mb-1">소셜 계정으로 로그인</p>
+          <div class="flex gap-4 justify-center">
+            <button class="w-12 h-12 rounded-full bg-[#FEE500] flex items-center justify-center shadow-sm hover:shadow-md transition-shadow hover:scale-105 active:scale-95 duration-200">
+              <span class="material-symbols-outlined text-[#3C1E1E]" style="font-variation-settings:'FILL' 1;">chat_bubble</span>
+            </button>
+            <button class="w-12 h-12 rounded-full bg-black flex items-center justify-center shadow-sm hover:shadow-md transition-shadow hover:scale-105 active:scale-95 duration-200">
+              <span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">apps</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="mt-12 text-center text-on-surface-variant/50 font-label-md text-[12px]">
+      <p>Echo Diary. All rights reserved.</p>
+    </footer>
+  </main>
 </div>
 
 <div id="mainApp">
 <div class="app">
   <div class="hdr">
     <div class="logo-row">
-      <div class="logo-dot">✦</div>
-      <div><div class="logo-name">Echo Diary</div><div class="logo-sub">당신의 하루를 예술로</div></div>
+      <div class="logo-dot"><span class="material-symbols-outlined" style="font-size:20px;">auto_stories</span></div>
+      <div class="logo-name">Echo Diary</div>
     </div>
     <div class="user-row">
       <span class="user-name" id="uName"></span>
-      <button class="btn-sm" onclick="doLogout()">로그아웃</button>
+      <button class="btn-sm" onclick="doLogout()" title="로그아웃"><span class="material-symbols-outlined" style="font-size:20px;">logout</span></button>
     </div>
   </div>
   <div class="tabs">
-    <button class="tab on" onclick="go('write',this)">✦ 일기</button>
-    <button class="tab" onclick="go('archive',this)">보관함</button>
-    <button class="tab" onclick="go('report',this)">리포트</button>
-    <button class="tab" onclick="go('profile',this)">프로필</button>
+    <button class="tab on" onclick="go('write',this)"><span class="material-symbols-outlined" style="font-size:22px;">edit_note</span>일기</button>
+    <button class="tab" onclick="go('archive',this)"><span class="material-symbols-outlined" style="font-size:22px;">history_edu</span>보관함</button>
+    <button class="tab" onclick="go('report',this)"><span class="material-symbols-outlined" style="font-size:22px;">equalizer</span>리포트</button>
+    <button class="tab" onclick="go('profile',this)"><span class="material-symbols-outlined" style="font-size:22px;">person</span>프로필</button>
   </div>
 
   <div class="panel on" id="panel-write">
     <div class="dt" id="dt"></div>
-    <div class="h1">오늘 하루,<br>무슨 일이 있었나요?</div>
-    <div class="sub">있는 그대로 적어주세요.</div>
+    <h2 class="h1">오늘의 에코 기록</h2>
+    <div class="glass-card" style="border-radius:24px;padding:20px 24px;margin-bottom:16px;">
+      <p style="font-family:'EB Garamond',serif;font-style:italic;font-size:18px;color:#635f7b;margin:0;">"오늘 기분이 어떠신가요?"</p>
+    </div>
     <div class="reminder-bar" id="reminderBar" style="display:none;">
       <span>🌙 하루를 마무리하며, 오늘의 이야기를 기록해보는 건 어때요?</span>
       <button onclick="dismissReminder()">닫기</button>
@@ -265,21 +540,29 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
       </div>
     </div>
     <div class="card">
-      <div class="card-lbl">오늘의 기록</div>
-      <textarea id="txt" placeholder="오늘 하루는... 어땠나요?" oninput="upCnt()"></textarea>
+      <textarea id="txt" placeholder="생각을 종이 위에 쏟아내 보세요..." oninput="upCnt()"></textarea>
       <div class="card-foot">
-        <div style="display:flex;align-items:center;"><span class="cnt" id="cnt">0자</span><span class="draft-save-ind" id="draftInd"></span></div>
-        <button class="btn" id="runBtn" onclick="run()">✦ 작품으로 변환하기</button>
+        <div style="display:flex;align-items:center;gap:8px;"><span class="cnt" id="cnt">0자</span><span class="draft-save-ind" id="draftInd" style="font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;color:rgba(69,70,80,0.4);"></span></div>
       </div>
     </div>
+    <div style="display:flex;justify-content:center;margin-top:24px;">
+      <button class="btn" id="runBtn" onclick="run()"><span class="material-symbols-outlined">auto_awesome</span>감정 분석하기</button>
+    </div>
     <div class="loading" id="loading">
-      <div class="spin"></div>
-      <div style="margin-top:12px;font-size:13px;color:var(--mu);">당신의 하루를 예술로 빚는 중...</div>
-      <div class="steps">
-        <div class="step" id="s1">⬡ 감정 분석</div>
-        <div class="step" id="s2">⬡ 시 생성</div>
-        <div class="step" id="s3">⬡ 편지 작성</div>
-        <div class="step" id="s4">⬡ 일러스트 생성</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:24px;">
+        <div style="position:relative;width:140px;height:140px;display:flex;align-items:center;justify-content:center;">
+          <div style="position:absolute;inset:0;border-radius:9999px;background:linear-gradient(135deg,#e2dcfd,#baece8,#dce1ff);filter:blur(24px);opacity:0.7;"></div>
+          <div class="glass-panel" style="position:relative;z-index:1;width:82%;height:82%;border-radius:9999px;display:flex;align-items:center;justify-content:center;">
+            <span class="material-symbols-outlined" id="loadingIcon" style="font-size:48px;color:#33447c;font-variation-settings:'FILL' 1;">psychology</span>
+          </div>
+        </div>
+        <p id="loadingStatus" style="font-family:'EB Garamond',serif;font-size:20px;color:#33447c;text-align:center;margin:0;">당신의 하루를 예술로 빚는 중...</p>
+        <div class="steps">
+          <div class="step" id="s1">⬡ 감정 분석</div>
+          <div class="step" id="s2">⬡ 시 생성</div>
+          <div class="step" id="s3">⬡ 편지 작성</div>
+          <div class="step" id="s4">⬡ 일러스트 생성</div>
+        </div>
       </div>
     </div>
     <div class="out" id="out">
@@ -293,34 +576,43 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
         <div class="oc poem"><div class="ol">AI 시</div><div class="ot" id="poem"></div></div>
         <div class="oc svg-card">
           <div class="ol">AI 일러스트</div>
-          <div class="svg-wrap" id="svgWrap"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--dm);font-size:13px;">준비 중</div></div>
+          <div class="svg-wrap" id="svgWrap"><div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(69,70,80,0.5);font-size:13px;font-family:'Plus Jakarta Sans',sans-serif;">준비 중</div></div>
         </div>
       </div>
       <div class="oc letter"><div class="ol">오늘의 나에게 — AI 편지</div><div class="ot" id="letter"></div></div>
-      <button class="btn btn-full" id="saveBtn" onclick="save()">↓ 보관함에 저장하기</button>
+      <button class="btn btn-full" id="saveBtn" onclick="save()"><span class="material-symbols-outlined">bookmark_add</span>보관함에 저장하기</button>
     </div>
   </div>
 
   <div class="panel" id="panel-archive">
     <div class="arch-hdr">
-      <div class="arch-title">나의 작품 보관함</div>
-      <span class="tag tag-ac" id="archCount">0편</span>
+      <div class="arch-title">나의 에코 보관함</div>
+      <span style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:#33447c;background:rgba(51,68,124,0.08);padding:4px 14px;border-radius:9999px;white-space:nowrap;" id="archCount">0편</span>
     </div>
-    <div class="cal-hdr">
-      <button class="cal-nav-btn" onclick="calMonthShift(-1)">‹</button>
-      <div class="cal-title" id="calTitle"></div>
-      <button class="cal-nav-btn" onclick="calMonthShift(1)">›</button>
+    <div class="search-row">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="material-symbols-outlined" style="color:#757681;">search</span>
+        <input class="inp" id="archSearch" type="text" placeholder="일기 내용, 시, 감정으로 검색..." oninput="onSearchInput()">
+      </div>
+      <div class="search-line"></div>
     </div>
-    <div class="cal-grid" id="calGrid"></div>
-    <div class="search-row"><input class="inp" id="archSearch" type="text" placeholder="키워드로 검색 (일기 내용, 시, 감정)" oninput="onSearchInput()" style="margin-bottom:0;"></div>
+    <div class="cal-card">
+      <div class="cal-hdr">
+        <div class="cal-hdr-title" id="calTitle"></div>
+        <div style="display:flex;gap:4px;">
+          <button class="cal-nav-btn" onclick="calMonthShift(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
+          <button class="cal-nav-btn" onclick="calMonthShift(1)"><span class="material-symbols-outlined">chevron_right</span></button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div style="font-family:'EB Garamond',serif;font-size:24px;font-weight:500;color:#1c1c19;margin-bottom:20px;">최근 기록</div>
     <div class="arch-grid" id="archGrid"><div class="arch-empty">아직 저장된 일기가 없습니다.</div></div>
   </div>
 
   <div class="panel" id="panel-report">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="font-family:'Noto Serif KR',serif;font-size:18px;font-weight:700;">나의 감정 여행</div>
-      <span class="tag tag-ac2">Report</span>
-    </div>
+    <div class="rpt-hero">감정 분석 리포트</div>
+    <div class="rpt-sub">당신의 목소리가 맺은 결실입니다.</div>
     <div class="rpt-grid">
       <div class="rpt-stat"><div class="rpt-num" id="r-days">0</div><div class="rpt-lbl">기록한 날</div></div>
       <div class="rpt-stat"><div class="rpt-num" id="r-words">0</div><div class="rpt-lbl">총 글자 수</div></div>
@@ -328,7 +620,7 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
       <div class="rpt-stat"><div class="rpt-num" id="r-svgs">0</div><div class="rpt-lbl">생성된 그림</div></div>
     </div>
     <div class="card">
-      <div class="card-lbl">최근 7일 감정 강도 변화</div>
+      <div class="card-lbl">주간 감정 패턴</div>
       <div class="trend-wrap" id="trendWrap"></div>
     </div>
     <div class="seg">
@@ -339,18 +631,36 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
       <div class="card-lbl" id="statChartLbl">이번 주 감정 분포</div>
       <div class="e-bars" id="statBars"></div>
     </div>
+    <div class="card">
+      <div class="card-lbl">에코의 패턴</div>
+      <div id="insightsWrap"></div>
+    </div>
     <div class="rpt-poem">
-      <div class="rpt-poem-lbl">✦ 최근 일기의 시</div>
-      <div class="rpt-poem-txt" id="rPoem">일기를 작성하면 여기에 시가 표시됩니다.</div>
+      <div class="rpt-poem-inner">
+        <div class="rpt-poem-lbl">✦ 최근 일기의 시</div>
+        <div class="rpt-poem-txt" id="rPoem">일기를 작성하면 여기에 시가 표시됩니다.</div>
+      </div>
     </div>
     <hr class="dv">
-    <div style="font-size:12px;color:var(--dm);text-align:center;">월간 단편소설 · 연간 AI 자서전은 프리미엄에서 제공됩니다.</div>
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;color:rgba(69,70,80,0.5);text-align:center;cursor:pointer;" onclick="openPremiumScreen()">월간 단편소설 · 연간 AI 자서전은 <span style="color:#33447c;font-weight:600;text-decoration:underline;">프리미엄</span>에서 제공됩니다.</div>
   </div>
 
   <div class="panel" id="panel-profile">
-    <div class="dt">MY ACCOUNT</div>
-    <div class="h1">프로필 설정</div>
-    <div class="sub">계정 정보를 관리하세요.</div>
+    <div class="pf-hero">
+      <div class="pf-avatar"><span class="material-symbols-outlined" style="color:#fff;font-size:36px;">person</span></div>
+      <div class="pf-name">나의 프로필</div>
+      <div class="pf-quote">"모든 말은 영혼의 메아리입니다."</div>
+    </div>
+
+    <div class="mb-4" style="border-radius:24px;padding:32px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(226,220,253,0.4),rgba(186,236,232,0.4));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.2);display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center;">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full shadow-sm" style="background:#fff;">
+        <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings:'FILL' 1;">star</span>
+        <span class="text-tertiary font-label-md text-label-md">PREMIUM</span>
+      </div>
+      <h3 class="font-headline-md text-headline-md text-primary">에코 프라임 멤버십</h3>
+      <p class="text-on-secondary-container" style="max-width:360px;opacity:0.9;">무제한 AI 회고 분석과 커스텀 수채화 테마로 당신의 기록을 더 특별하게 만들어보세요.</p>
+      <button class="bg-primary text-white px-8 py-3 rounded-full font-label-md text-label-md hover:scale-[1.02] active:scale-95 transition-all shadow-lg" onclick="openPremiumScreen()">자세히 보기</button>
+    </div>
 
     <div class="card">
       <div class="card-lbl">이메일</div>
@@ -387,6 +697,12 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
       <div class="danger-desc">회원 탈퇴 시 모든 일기와 계정 정보가 영구적으로 삭제되며 복구할 수 없습니다.</div>
       <button class="btn-danger" style="width:100%;" onclick="openDeleteAccountModal()">회원 탈퇴</button>
     </div>
+
+    <div style="margin-top:32px;display:flex;justify-content:center;">
+      <button onclick="doLogout()" style="display:flex;align-items:center;gap:8px;background:none;border:none;color:#757681;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;cursor:pointer;padding:8px 24px;">
+        <span class="material-symbols-outlined" style="font-size:18px;">logout</span>로그아웃
+      </button>
+    </div>
   </div>
 </div>
 </div>
@@ -407,7 +723,7 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
   <div class="modal-box" style="max-width:420px;">
     <div class="modal-title">일기 수정</div>
     <div class="edit-moods" id="editMoods"></div>
-    <textarea id="editTxt" style="min-height:160px;border:1px solid var(--bd2);border-radius:var(--rs);padding:12px;background:var(--sf2);font-size:14px;"></textarea>
+    <textarea id="editTxt" style="min-height:160px;"></textarea>
     <div class="modal-btns" style="margin-top:16px;">
       <button class="btn-outline" onclick="closeEditModal()">취소</button>
       <button class="btn" style="flex:1;justify-content:center;" onclick="saveEditEntry()">저장</button>
@@ -425,6 +741,107 @@ hr.dv{border:none;border-top:1px solid var(--bd);margin:20px 0;}
       <button class="btn-outline" onclick="closePwConfirmModal()">취소</button>
       <button class="btn-danger" onclick="confirmDeleteAccount()">탈퇴</button>
     </div>
+  </div>
+</div>
+
+<div id="premiumScreen" style="display:none;position:fixed;inset:0;z-index:1500;background:#fcf9f4;overflow-y:auto;">
+  <header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(75,92,150,0.08)] flex justify-between items-center px-container-padding h-16">
+    <div class="flex items-center gap-3">
+      <span class="material-symbols-outlined text-primary text-[28px]">auto_stories</span>
+      <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight">나만의 AI 자서전</h1>
+    </div>
+    <button class="hover:scale-[1.02] active:scale-95 transition-all" onclick="closePremiumScreen()">
+      <span class="material-symbols-outlined text-primary text-[28px]">close</span>
+    </button>
+  </header>
+  <main class="pt-24 pb-40 max-w-[1024px] mx-auto px-container-padding relative overflow-hidden">
+    <div class="absolute top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+      <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full" style="background:linear-gradient(135deg,#e2dcfd,#baece8,#ffdad6);opacity:0.15;filter:blur(60px);"></div>
+      <div class="absolute top-1/2 -right-20 w-80 h-80 rounded-full" style="background:linear-gradient(135deg,#e2dcfd,#baece8,#ffdad6);opacity:0.15;filter:blur(60px);"></div>
+    </div>
+    <section class="flex flex-col items-center gap-12 mb-section-gap">
+      <div class="relative">
+        <div class="rounded-r-lg relative flex flex-col items-center justify-between py-12 px-8" style="width:280px;height:400px;background:#33447c;box-shadow:20px 20px 60px rgba(75,92,150,0.15),-5px 0 15px rgba(0,0,0,0.05);">
+          <div class="absolute left-0 top-0 bottom-0 w-4 rounded-l-sm" style="background:linear-gradient(to right,rgba(0,0,0,0.2),transparent);"></div>
+          <div class="text-center">
+            <p class="font-label-md text-label-md text-on-primary-container/60 mb-2" style="letter-spacing:0.2em;text-transform:uppercase;">Memoirs of</p>
+            <h2 class="font-headline-lg text-headline-lg text-white">에코 다이어리</h2>
+          </div>
+          <div class="w-16 h-[1px] bg-white/30"></div>
+          <div class="text-center">
+            <span class="material-symbols-outlined text-white/40 text-4xl mb-4">auto_awesome</span>
+            <p class="font-headline-md text-headline-md text-on-primary-container" id="premiumYear"></p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center max-w-lg space-y-4">
+        <p class="font-headline-md text-headline-md text-primary leading-relaxed">한 해 동안 쌓인 당신의 에코를 엮어<br>세상에 하나뿐인 자서전을 만들어 드립니다</p>
+        <div class="flex justify-center gap-2">
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/30 border border-secondary-container text-on-secondary-container font-label-md text-label-md">Premium Only</span>
+          <span class="inline-flex items-center px-3 py-1 rounded-full bg-tertiary-fixed/30 border border-tertiary-fixed text-tertiary font-label-md text-label-md">AI Curation</span>
+        </div>
+      </div>
+    </section>
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-gutter mb-section-gap">
+      <div class="glass-card rounded-[24px] p-8 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary">menu_book</span>
+          </div>
+          <span class="font-label-md text-label-md text-outline">Monthly Feature</span>
+        </div>
+        <div>
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-2">이달의 소설</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">당신의 일상을 매력적인 문체로 재구성합니다. 평범한 하루가 한 편의 단편 소설이 되는 마법을 경험하세요.</p>
+        </div>
+        <div class="h-40 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,#e2dcfd,#baece8);">
+          <span class="material-symbols-outlined text-white" style="font-size:48px;opacity:0.7;">auto_stories</span>
+        </div>
+      </div>
+      <div class="glass-card rounded-[24px] p-8 space-y-6">
+        <div class="flex items-center justify-between">
+          <div class="w-12 h-12 rounded-full flex items-center justify-center" style="background:rgba(55,103,100,0.2);">
+            <span class="material-symbols-outlined text-tertiary">analytics</span>
+          </div>
+          <span class="font-label-md text-label-md text-outline">Insights</span>
+        </div>
+        <div>
+          <h3 class="font-headline-md text-headline-md text-on-surface mb-2">연간 리포트</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">감정의 흐름, 가장 많이 사용한 단어, 소중했던 순간들을 데이터로 시각화하여 당신의 일 년을 회고합니다.</p>
+        </div>
+        <div class="grid grid-cols-2 gap-3 h-40">
+          <div class="rounded-xl bg-surface-container-high flex flex-col items-center justify-center p-4">
+            <span class="font-headline-md text-primary" id="premiumDaysCount">0</span>
+            <p class="font-label-md text-on-surface-variant">Active Days</p>
+          </div>
+          <div class="rounded-xl bg-surface-container-high flex flex-col items-center justify-center p-4">
+            <span class="font-headline-md text-tertiary" id="premiumTopEmotion">-</span>
+            <p class="font-label-md text-on-surface-variant">Top Emotion</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="mb-section-gap text-center px-4">
+      <div class="max-w-2xl mx-auto space-y-6">
+        <span class="material-symbols-outlined text-primary/40 text-5xl" style="font-variation-settings:'FILL' 1;">format_quote</span>
+        <p class="font-headline-md italic text-primary leading-relaxed">"가장 개인적인 것이 가장 창의적인 것입니다. 당신의 평범한 오늘이 내일의 역사가 됩니다."</p>
+        <div class="flex items-center justify-center gap-4 pt-4">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background:linear-gradient(135deg,#4b5c96,#33447c);">
+            <span class="material-symbols-outlined text-white" style="font-size:18px;">auto_awesome</span>
+          </div>
+          <div class="text-left">
+            <p class="font-label-md text-label-md text-on-surface">Echo AI Curator</p>
+            <p class="text-xs text-outline">Editorial Intelligence</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div class="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-md px-container-padding" style="z-index:1600;">
+    <button class="w-full py-4 px-8 bg-primary text-white rounded-full font-label-md text-lg shadow-[0_8px_30px_rgba(51,68,124,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3" onclick="premiumComingSoon()">
+      <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">workspace_premium</span>
+      프리미엄 구독하고 받기
+    </button>
   </div>
 </div>
 
@@ -481,13 +898,63 @@ async function aiSvg(sys, usr) {
 let user=null, moods=[], cur=null, entries=[];
 let selectedDateKey=null, searchKw="", calViewYear=null, calViewMonth=null;
 let statPeriod="week", editingId=null, confirmCb=null, draftTimer=null;
-const CC=["var(--ac)","var(--ac2)","var(--ac3)","var(--gold)","#9ab"];
+const CC=["#33447c","#1c4f4c","#5f5b77","#b8882a","#9ab"];
 const MOOD_ICON={"기쁨":"☀","슬픔":"🌧","우울":"🌫","불안":"🌪","평온":"🌊","설렘":"🌸","피로":"🍂","분노":"🔥","그리움":"🌙","감사":"🕊"};
 const MOOD_ALL=Object.keys(MOOD_ICON);
 
 // ── 날짜
 const d=new Date(), DAY=["일","월","화","수","목","금","토"];
 document.getElementById("dt").textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 ${DAY[d.getDay()]}요일`;
+
+// ── 온보딩 (최초 1회만 노출, localStorage 기준)
+function checkOnboarding(){
+  const el=document.getElementById("onboardScreen");
+  if(!el) return;
+  if(localStorage.getItem("echoOnboarded")==="1"){ el.style.display="none"; return; }
+  el.style.display="flex";
+  const container=document.getElementById("onboardParticles");
+  if(container && !container.dataset.done){
+    container.dataset.done="1";
+    for(let i=0;i<15;i++){
+      const p=document.createElement("div");
+      p.className="onboard-particle";
+      const size=Math.random()*8+4;
+      p.style.width=size+"px"; p.style.height=size+"px";
+      p.style.left=(Math.random()*100)+"%"; p.style.top=(Math.random()*100)+"%";
+      const duration=Math.random()*20+10, delay=Math.random()*5;
+      p.style.animation=`onboard-particle-float ${duration}s linear ${delay}s infinite`;
+      container.appendChild(p);
+    }
+  }
+}
+window.completeOnboarding = () => {
+  localStorage.setItem("echoOnboarded","1");
+  document.getElementById("onboardScreen").style.display="none";
+};
+checkOnboarding();
+
+// ── PWA: 서비스워커 등록 (정적 자산 캐싱)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch((e) => console.warn("SW 등록 실패:", e));
+  });
+}
+
+// ── 프리미엄 잠금 화면 (UI만, 기능 연동은 추후)
+function updatePremiumPreview(){
+  const y=document.getElementById("premiumYear"); if(y) y.textContent=new Date().getFullYear();
+  const dc=document.getElementById("premiumDaysCount");
+  if(dc){ const uniqDays=new Set(entries.map(e=>(e.dateKey||"").slice(0,10)).filter(Boolean)); dc.textContent=uniqDays.size; }
+  const te=document.getElementById("premiumTopEmotion");
+  if(te){
+    const emoCount={}; entries.forEach(e=>(e.emotions||[]).forEach(em=>{emoCount[em.name]=(emoCount[em.name]||0)+1;}));
+    const top=Object.entries(emoCount).sort((a,b)=>b[1]-a[1])[0];
+    te.textContent = top ? top[0] : "-";
+  }
+}
+window.openPremiumScreen = () => { updatePremiumPreview(); document.getElementById("premiumScreen").style.display="block"; };
+window.closePremiumScreen = () => { document.getElementById("premiumScreen").style.display="none"; };
+window.premiumComingSoon = () => notif("프리미엄 구독 기능은 준비 중입니다.");
 
 // ── Auth 상태 감지
 onAuthStateChanged(auth, async u => {
@@ -565,9 +1032,16 @@ window.upCnt = () => {
 function notif(msg){const n=document.getElementById("notif");n.textContent=msg;n.style.display="block";setTimeout(()=>n.style.display="none",3000);}
 
 const SL={s1:"감정 분석",s2:"시 생성",s3:"편지 작성",s4:"일러스트 생성"};
+const STEP_ICON={s1:"mood",s2:"auto_awesome",s3:"mail",s4:"palette"};
+const STEP_STATUS={s1:"마음의 깊이를 헤아리고 있습니다...",s2:"단어들을 모아 시를 엮고 있습니다...",s3:"따뜻한 위로를 담은 편지를 씁니다...",s4:"오늘의 감정을 색으로 칠하고 있습니다..."};
 function step(id,st){
   const el=document.getElementById(id),lb=SL[id];
-  if(st==="go"){el.className="step go";el.innerHTML=`<span class="spin" style="width:12px;height:12px;border-width:1.5px;"></span>${lb}`;}
+  if(st==="go"){
+    el.className="step go";el.innerHTML=`<span class="spin" style="width:12px;height:12px;border-width:1.5px;"></span>${lb}`;
+    const li=document.getElementById("loadingIcon"),ls=document.getElementById("loadingStatus");
+    if(li)li.textContent=STEP_ICON[id];
+    if(ls)ls.textContent=STEP_STATUS[id];
+  }
   else if(st==="ok"){el.className="step ok";el.textContent=`✓ ${lb} 완료`;}
   else{el.className="step";el.textContent=`⬡ ${lb}`;}
 }
@@ -646,7 +1120,9 @@ function render(r) {
 function setSaveBtnMode(isEdit){
   const b=document.getElementById("saveBtn");
   b.style.display="inline-flex";
-  b.textContent = isEdit ? "↻ 수정사항 저장하기" : "↓ 보관함에 저장하기";
+  b.innerHTML = isEdit
+    ? `<span class="material-symbols-outlined">check_circle</span>수정사항 저장하기`
+    : `<span class="material-symbols-outlined">bookmark_add</span>보관함에 저장하기`;
 }
 window.save = async () => {
   if(!cur||!user)return;
@@ -687,9 +1163,17 @@ function matchesFilter(e){
   return true;
 }
 function archCardHtml(e){
-  const dt=new Date(e.date),ds=`${dt.getMonth()+1}/${dt.getDate()}`;
-  const th=e.svgCode?`<div class="arch-img">${e.svgCode.replace(/<svg/,'<svg style="width:100%;height:100%;"')}</div>`:`<div class="arch-img" style="display:flex;align-items:center;justify-content:center;font-size:24px;">🎨</div>`;
-  return `<div class="arch-card" onclick="openEntry('${e.id}')">${th}<div class="arch-body"><div class="arch-date">${ds} ${(e.moods||[]).join(" ")}</div><div class="arch-txt">${(e.poem||e.content||"").replace(/</g,"&lt;")}</div><div class="arch-actions"><button class="arch-act" onclick="editEntry(event,'${e.id}')">수정</button><button class="arch-act del" onclick="deleteEntry(event,'${e.id}')">삭제</button></div></div></div>`;
+  const dt=new Date(e.date),ds=`${dt.getFullYear()}. ${String(dt.getMonth()+1).padStart(2,"0")}. ${String(dt.getDate()).padStart(2,"0")}`;
+  const th=e.svgCode?e.svgCode.replace(/<svg/,'<svg style="width:100%;height:100%;"'):`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;">🎨</div>`;
+  const moodTag=(e.moods&&e.moods[0])?`<span style="position:absolute;bottom:10px;left:10px;padding:3px 12px;border-radius:9999px;background:rgba(255,255,255,0.3);backdrop-filter:blur(8px);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:10px;border:1px solid rgba(255,255,255,0.3);text-shadow:0 1px 2px rgba(0,0,0,0.3);">${e.moods[0]}</span>`:"";
+  return `<div class="arch-card" onclick="openEntry('${e.id}')">
+    <div class="arch-img">${th}<div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.25),transparent 60%);"></div>${moodTag}</div>
+    <div class="arch-body">
+      <div class="arch-txt">${(e.poem||e.content||"").replace(/</g,"&lt;")}</div>
+      <div class="arch-date">${ds}</div>
+      <div class="arch-actions"><button class="arch-act" onclick="editEntry(event,'${e.id}')">수정</button><button class="arch-act del" onclick="deleteEntry(event,'${e.id}')">삭제</button></div>
+    </div>
+  </div>`;
 }
 function renderArchiveGrid(){
   const g=document.getElementById("archGrid");
@@ -803,6 +1287,24 @@ function drawReport(){
   if(entries.length&&entries[0].poem)document.getElementById("rPoem").textContent=entries[0].poem;
   drawStatChart();
   drawTrendChart();
+  computeInsights();
+}
+
+// ── 에코의 패턴 (기존 entries로부터 계산되는 간단한 인사이트)
+function computeInsights(){
+  const wrap=document.getElementById("insightsWrap");
+  if(!wrap) return;
+  if(!entries.length){wrap.innerHTML='<div class="stat-empty">아직 기록이 없습니다. 첫 일기를 남겨보세요.</div>';return;}
+  const emoCount={};
+  entries.forEach(e=>(e.emotions||[]).forEach(em=>{emoCount[em.name]=(emoCount[em.name]||0)+1;}));
+  const topEmo=Object.entries(emoCount).sort((a,b)=>b[1]-a[1])[0];
+  const dowCount=[0,0,0,0,0,0,0];
+  entries.forEach(e=>{const k=(e.dateKey||e.date||"").slice(0,10);if(k){const d=new Date(k);if(!isNaN(d))dowCount[d.getDay()]++;}});
+  const topDowIdx=dowCount.indexOf(Math.max(...dowCount));
+  const rows=[];
+  if(topEmo) rows.push({icon:"favorite",html:`지금까지 가장 자주 기록된 감정은 <b>${topEmo[0]}</b>입니다. (${topEmo[1]}회)`});
+  if(Math.max(...dowCount)>0) rows.push({icon:"calendar_month",html:`<b>${DAY[topDowIdx]}요일</b>에 가장 많이 기록을 남겼습니다.`});
+  wrap.innerHTML=rows.map(r=>`<div class="insight-card"><div class="insight-ic"><span class="material-symbols-outlined" style="color:#33447c;font-size:18px;">${r.icon}</span></div><div class="insight-txt">${r.html}</div></div>`).join("");
 }
 
 // ── 최근 7일 감정 강도 변화 (단일 시리즈 라인 차트)
@@ -835,15 +1337,15 @@ function drawTrendChart(){
 
   const dots=pts.map((p,i)=>{
     if(p.y==null) return "";
-    const label=(i===maxIdx||i===lastIdx)?`<text x="${p.x.toFixed(1)}" y="${(p.y-10).toFixed(1)}" text-anchor="middle" font-size="10" fill="var(--ac)" font-family="'Noto Sans KR',sans-serif">${p.d.avg}%</text>`:"";
-    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="var(--sf)" stroke="var(--ac)" stroke-width="2"><title>${p.d.label}요일 ${p.d.dt.getMonth()+1}/${p.d.dt.getDate()} · 평균 강도 ${p.d.avg}%</title></circle>${label}`;
+    const label=(i===maxIdx||i===lastIdx)?`<text x="${p.x.toFixed(1)}" y="${(p.y-10).toFixed(1)}" text-anchor="middle" font-size="10" fill="#33447c" font-family="'Plus Jakarta Sans',sans-serif">${p.d.avg}%</text>`:"";
+    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="#fcf9f4" stroke="#33447c" stroke-width="2"><title>${p.d.label}요일 ${p.d.dt.getMonth()+1}/${p.d.dt.getDate()} · 평균 강도 ${p.d.avg}%</title></circle>${label}`;
   }).join("");
-  const dayLabels=days.map((d,i)=>`<text x="${(padX+i*stepX).toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="9" fill="var(--dm)" font-family="'Noto Sans KR',sans-serif">${d.label}</text>`).join("");
+  const dayLabels=days.map((d,i)=>`<text x="${(padX+i*stepX).toFixed(1)}" y="${H-3}" text-anchor="middle" font-size="9" fill="rgba(69,70,80,0.5)" font-family="'Plus Jakarta Sans',sans-serif">${d.label}</text>`).join("");
 
   wrap.innerHTML=`<svg class="trend-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
-    <line x1="${padX}" y1="${H-padY}" x2="${W-padX}" y2="${H-padY}" stroke="var(--bd)" stroke-width="1"/>
-    ${areaD?`<path d="${areaD}" fill="var(--ac)" opacity="0.08" stroke="none"/>`:""}
-    ${pathD?`<path d="${pathD}" fill="none" stroke="var(--ac)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:""}
+    <line x1="${padX}" y1="${H-padY}" x2="${W-padX}" y2="${H-padY}" stroke="#e5e2dd" stroke-width="1"/>
+    ${areaD?`<path d="${areaD}" fill="#33447c" opacity="0.1" stroke="none"/>`:""}
+    ${pathD?`<path d="${pathD}" fill="none" stroke="#33447c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`:""}
     ${dots}
     ${dayLabels}
   </svg>`;
