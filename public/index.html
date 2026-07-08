@@ -856,6 +856,12 @@ import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, serve
          doc, updateDoc, deleteDoc }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// ── [DIAG] 임시 진단 로그 (버그 원인 파악 후 제거 예정)
+console.log("[DIAG] module script started, readyState:", document.readyState);
+window.addEventListener("error", (e) => console.error("[DIAG] window error:", e.message, e.filename, e.lineno));
+window.addEventListener("unhandledrejection", (e) => console.error("[DIAG] unhandled rejection:", e.reason));
+window.addEventListener("beforeunload", () => console.warn("[DIAG] beforeunload fired — a real navigation/reload is happening!"));
+
 // ── Firebase 설정
 const app = initializeApp({
   apiKey: "AIzaSyC-yPnYVV9EyDhejmo4dOs1JaeuzU4XsEs",
@@ -909,9 +915,11 @@ document.getElementById("dt").textContent=`${d.getFullYear()}년 ${d.getMonth()+
 // ── 온보딩 (최초 1회만 노출, localStorage 기준)
 function checkOnboarding(){
   const el=document.getElementById("onboardScreen");
+  console.log("[DIAG] checkOnboarding called, onboardScreen found:", !!el, "echoOnboarded:", localStorage.getItem("echoOnboarded"));
   if(!el) return;
-  if(localStorage.getItem("echoOnboarded")==="1"){ el.style.display="none"; return; }
+  if(localStorage.getItem("echoOnboarded")==="1"){ el.style.display="none"; console.log("[DIAG] onboarding skipped (already seen)"); return; }
   el.style.display="flex";
+  console.log("[DIAG] onboarding shown");
   const container=document.getElementById("onboardParticles");
   if(container && !container.dataset.done){
     container.dataset.done="1";
@@ -957,19 +965,29 @@ window.closePremiumScreen = () => { document.getElementById("premiumScreen").sty
 window.premiumComingSoon = () => notif("프리미엄 구독 기능은 준비 중입니다.");
 
 // ── Auth 상태 감지
+console.log("[DIAG] registering onAuthStateChanged listener");
 onAuthStateChanged(auth, async u => {
+  console.log("[DIAG] onAuthStateChanged fired, u:", u ? (u.email || u.uid) : null);
   user = u;
-  if (u) {
-    document.getElementById("authScreen").style.display = "none";
-    document.getElementById("mainApp").style.display = "block";
-    document.getElementById("uName").textContent = u.displayName || u.email.split("@")[0];
-    document.getElementById("pfEmail").textContent = u.email;
-    document.getElementById("pfName").value = u.displayName || "";
-    await loadEntries();
-    renderArchiveGrid(); drawReport(); drawMonthCal(); loadDraft(); checkEveningReminder(); updateNotifUI();
-  } else {
-    document.getElementById("authScreen").style.display = "flex";
-    document.getElementById("mainApp").style.display = "none";
+  try {
+    if (u) {
+      console.log("[DIAG] branch: logged in -> hide authScreen, show mainApp");
+      document.getElementById("authScreen").style.display = "none";
+      document.getElementById("mainApp").style.display = "block";
+      document.getElementById("uName").textContent = u.displayName || u.email.split("@")[0];
+      document.getElementById("pfEmail").textContent = u.email;
+      document.getElementById("pfName").value = u.displayName || "";
+      await loadEntries();
+      renderArchiveGrid(); drawReport(); drawMonthCal(); loadDraft(); checkEveningReminder(); updateNotifUI();
+      console.log("[DIAG] logged-in branch completed successfully");
+    } else {
+      console.log("[DIAG] branch: logged out -> show authScreen, hide mainApp");
+      document.getElementById("authScreen").style.display = "flex";
+      document.getElementById("mainApp").style.display = "none";
+      console.log("[DIAG] logged-out branch completed. authScreen display now:", document.getElementById("authScreen").style.display, "mainApp display now:", document.getElementById("mainApp").style.display);
+    }
+  } catch (err) {
+    console.error("[DIAG] CRASH inside onAuthStateChanged:", err);
   }
 });
 
